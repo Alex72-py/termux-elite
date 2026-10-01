@@ -1,13 +1,158 @@
 {
   "schema_version": 1,
+  "version": "0.2.0",
   "name": "termux-elite",
   "description": "Portable operational skills for agents working inside Termux and Android environments.",
   "skills": [
-    {"name":"termux-environment","path":"skills/termux-environment/SKILL.md","description":"Detect native Termux, Android, architecture, tools, storage and resource constraints.","triggers":["termux environment","android environment","what is installed"],"required_capabilities":["shell"],"platform":"termux","risk_level":"low"},
-    {"name":"python-native-build","path":"skills/python-native-build/SKILL.md","description":"Diagnose Python installs that need native libraries, compilers, Rust or unavailable wheels.","triggers":["pip failed","python package install","wheel unavailable","build error"],"required_capabilities":["shell","python"],"platform":"termux","risk_level":"medium"},
-    {"name":"package-troubleshooting","path":"skills/package-troubleshooting/SKILL.md","description":"Choose pkg versus apt, repair repository metadata and separate package from build failures.","triggers":["pkg failed","apt failed","package not found","repository error"],"required_capabilities":["shell","package_manager"],"platform":"termux","risk_level":"medium"},
-    {"name":"storage-permissions","path":"skills/storage-permissions/SKILL.md","description":"Diagnose Android shared-storage access and Termux permission boundaries.","triggers":["storage permission","permission denied android","shared storage"],"required_capabilities":["shell","termux"],"platform":"termux","risk_level":"low"},
-    {"name":"proot-boundaries","path":"skills/proot-boundaries/SKILL.md","description":"Determine whether a failure belongs to native Termux or a proot distro and choose the right package boundary.","triggers":["proot","proot-distro","ubuntu in termux","native termux"],"required_capabilities":["shell","process"],"platform":"termux","risk_level":"medium"},
-    {"name":"github-actions","path":"skills/github-actions/SKILL.md","description":"Investigate failed GitHub Actions runs from local repositories without exposing credentials.","triggers":["github action failed","workflow failed","ci failed"],"required_capabilities":["git","github"],"platform":"termux","risk_level":"low"}
+    {
+      "name": "termux-environment",
+      "path": "skills/termux-environment/SKILL.md",
+      "description": "Detect native Termux, Android, architecture, tools, storage and resource constraints.",
+      "triggers": [
+        "termux environment",
+        "android environment",
+        "what is installed"
+      ],
+      "required_capabilities": [
+        "shell"
+      ],
+      "platform": "termux",
+      "risk_level": "low"
+    },
+    {
+      "name": "python-native-build",
+      "path": "skills/python-native-build/SKILL.md",
+      "description": "Diagnose Python installs that need native libraries, compilers, Rust or unavailable wheels.",
+      "triggers": [
+        "pip failed",
+        "python package install",
+        "wheel unavailable",
+        "build error"
+      ],
+      "required_capabilities": [
+        "shell",
+        "python"
+      ],
+      "platform": "termux",
+      "risk_level": "medium"
+    },
+    {
+      "name": "package-troubleshooting",
+      "path": "skills/package-troubleshooting/SKILL.md",
+      "description": "Choose pkg versus apt, repair repository metadata and separate package from build failures.",
+      "triggers": [
+        "pkg failed",
+        "apt failed",
+        "package not found",
+        "repository error"
+      ],
+      "required_capabilities": [
+        "shell",
+        "package_manager"
+      ],
+      "platform": "termux",
+      "risk_level": "medium"
+    },
+    {
+      "name": "storage-permissions",
+      "path": "skills/storage-permissions/SKILL.md",
+      "description": "Diagnose Android shared-storage access and Termux permission boundaries.",
+      "triggers": [
+        "storage permission",
+        "permission denied android",
+        "shared storage"
+      ],
+      "required_capabilities": [
+        "shell",
+        "termux"
+      ],
+      "platform": "termux",
+      "risk_level": "low"
+    },
+    {
+      "name": "proot-boundaries",
+      "path": "skills/proot-boundaries/SKILL.md",
+      "description": "Determine whether a failure belongs to native Termux or a proot distro and choose the right package boundary.",
+      "triggers": [
+        "proot",
+        "proot-distro",
+        "ubuntu in termux",
+        "native termux"
+      ],
+      "required_capabilities": [
+        "shell",
+        "process"
+      ],
+      "platform": "termux",
+      "risk_level": "medium"
+    },
+    {
+      "name": "github-actions",
+      "path": "skills/github-actions/SKILL.md",
+      "description": "Investigate failed GitHub Actions runs from local repositories without exposing credentials.",
+      "triggers": [
+        "github action failed",
+        "workflow failed",
+        "ci failed"
+      ],
+      "required_capabilities": [
+        "git",
+        "github"
+      ],
+      "platform": "termux",
+      "risk_level": "low"
+    },
+    {
+      "name": "termux-api",
+      "path": "skills/termux-api/SKILL.md",
+      "description": "Determine whether Termux:API is installed, matched, and permitted before relying on termux-* commands.",
+      "triggers": [
+        "termux-api",
+        "termux api",
+        "termux-battery-status",
+        "termux command hangs"
+      ],
+      "required_capabilities": [
+        "shell",
+        "termux"
+      ],
+      "platform": "termux",
+      "risk_level": "low"
+    },
+    {
+      "name": "background-processes",
+      "path": "skills/background-processes/SKILL.md",
+      "description": "Diagnose long-running processes that Android suspends or kills and choose the smallest mitigation.",
+      "triggers": [
+        "process killed",
+        "signal 9",
+        "background process",
+        "wake lock",
+        "phantom process"
+      ],
+      "required_capabilities": [
+        "shell",
+        "process"
+      ],
+      "platform": "termux",
+      "risk_level": "medium"
+    },
+    {
+      "name": "git-credentials",
+      "path": "skills/git-credentials/SKILL.md",
+      "description": "Diagnose git clone and push authentication from Termux without exposing tokens or private keys.",
+      "triggers": [
+        "git push failed",
+        "permission denied publickey",
+        "authentication failed",
+        "ssh key"
+      ],
+      "required_capabilities": [
+        "shell",
+        "git"
+      ],
+      "platform": "termux",
+      "risk_level": "medium"
+    }
   ]
 }

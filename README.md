@@ -1,19 +1,26 @@
 # termux-elite
 
+![ci](https://github.com/Alex72-py/termux-elite/actions/workflows/ci.yml/badge.svg)
+
 Portable operational skills for agents working inside Termux and Android environments.
 
 This repository is a **knowledge and procedure layer**, not a replacement shell, framework, or collection of copy-paste commands. Each skill encodes when to inspect the environment, how to choose among native Termux and proot paths, what can fail, what is safe to change, and how to verify the result.
 
 ## Included skills
 
-- `termux-environment`: low-cost environment and capability detection
-- `python-native-build`: Python packages that need native libraries, compilers, or Rust
-- `package-troubleshooting`: `pkg`/`apt` diagnosis and repository boundaries
-- `storage-permissions`: Android shared-storage and permission diagnosis
-- `proot-boundaries`: native Termux versus proot decision procedure
-- `github-actions`: safe investigation of failed workflow runs
+| Skill | Purpose | Risk |
+| --- | --- | --- |
+| `termux-environment` | Low-cost environment and capability detection | low |
+| `python-native-build` | Python packages that need native libraries, compilers, or Rust | medium |
+| `package-troubleshooting` | `pkg`/`apt` diagnosis and repository boundaries | medium |
+| `storage-permissions` | Android shared-storage and permission diagnosis | low |
+| `proot-boundaries` | Native Termux versus proot decision procedure | medium |
+| `github-actions` | Safe investigation of failed workflow runs | low |
+| `termux-api` | Termux:API app, package, and permission diagnosis | low |
+| `background-processes` | Processes suspended or killed by Android | medium |
+| `git-credentials` | Git HTTPS/SSH authentication without leaking secrets | medium |
 
-The initial skills are intentionally focused. New skills should earn their place by encoding a repeatable operational decision, not by restating platform documentation.
+The skills are intentionally focused. New skills should earn their place by encoding a repeatable operational decision, not by restating platform documentation. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Layout
 
@@ -24,10 +31,26 @@ skills/<name>/scripts/       # small, read-only helpers where useful
 skills/<name>/references/    # deeper material, when needed
 adapters/<agent>/             # integration notes for a host agent
 examples/
-tests/
+docs/                         # skill template
+tests/                        # manifest, frontmatter, and script checks
+.github/workflows/ci.yml
 ```
 
 `manifest.json` is the discovery interface. It records name, description, triggers, required capabilities, platform, risk, and the path to the skill document.
+
+## Minimal host integration
+
+```python
+import json, pathlib
+
+root = pathlib.Path("termux-elite")
+manifest = json.loads((root / "manifest.json").read_text())
+request = "pip install cryptography failed with a build error"
+hits = [s for s in manifest["skills"] if any(t in request.lower() for t in s["triggers"])]
+print([s["path"] for s in hits])
+```
+
+Read the selected `SKILL.md` before proposing commands. The host agent still owns confirmation and execution.
 
 ## Use from ARIA
 
@@ -43,6 +66,15 @@ ARIA can also consume any directory with the same `manifest.json` and `skills/*/
 ## Tool-agnostic integration
 
 Adapters explain how a host agent can expose the same files as searchable skills. They do not contain private prompts or proprietary implementation details. The core `SKILL.md` files remain the source of truth.
+
+## Verify the repository
+
+```sh
+python -m pip install pytest
+python -m pytest -q
+```
+
+The tests check that every skill is listed in the manifest, that `SKILL.md` frontmatter matches the manifest, that required sections exist, that helper scripts are valid and read-only, and that no obvious secrets are committed.
 
 ## Design rules
 
