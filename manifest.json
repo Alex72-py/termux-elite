@@ -1,158 +1,418 @@
 {
   "schema_version": 1,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "name": "termux-elite",
   "description": "Portable operational skills for agents working inside Termux and Android environments.",
   "skills": [
     {
       "name": "termux-environment",
       "path": "skills/termux-environment/SKILL.md",
-      "description": "Detect native Termux, Android, architecture, tools, storage and resource constraints.",
+      "description": "Take a small read-only snapshot of a Termux or Android shell (native or proot, Android and Termux version, CPU architecture, installed toolchains, free storage and memory) before choosing a package manager, path, or fix. Use when a task depends on what the device is, when asked what is installed or which architecture applies, or at the start of any Termux debugging session. Do NOT use as a ritual before every command, for plain text questions, or to change anything.",
       "triggers": [
         "termux environment",
         "android environment",
-        "what is installed"
+        "what is installed",
+        "which architecture",
+        "am i in proot",
+        "termux version",
+        "android version"
       ],
       "required_capabilities": [
         "shell"
       ],
       "platform": "termux",
-      "risk_level": "low"
+      "risk_level": "low",
+      "related": [
+        "proot-boundaries",
+        "package-troubleshooting",
+        "storage-permissions",
+        "python-native-build"
+      ],
+      "scripts": [
+        "skills/termux-environment/scripts/detect-environment.sh"
+      ]
     },
     {
       "name": "python-native-build",
       "path": "skills/python-native-build/SKILL.md",
-      "description": "Diagnose Python installs that need native libraries, compilers, Rust or unavailable wheels.",
+      "description": "Diagnose a failed Python install on Termux or Android (compiler or header errors, Rust or maturin builds, no wheel for this platform, glibc wheels that fail at import, externally-managed-environment) and pick the smallest fix, preferring Termux-packaged libraries over source builds. Use when pip or uv fails, when a build error mentions clang, cc, cargo, rustc or a missing .h file, or when an import fails right after a successful install. Do NOT use for slow downloads, pure-Python packages that install fine, or Node problems (see node-native-build).",
       "triggers": [
         "pip failed",
         "python package install",
         "wheel unavailable",
-        "build error"
+        "build error",
+        "externally-managed-environment",
+        "failed building wheel",
+        "cargo failed",
+        "cannot locate symbol"
       ],
       "required_capabilities": [
         "shell",
         "python"
       ],
       "platform": "termux",
-      "risk_level": "medium"
+      "risk_level": "medium",
+      "related": [
+        "termux-environment",
+        "package-troubleshooting",
+        "proot-boundaries",
+        "background-processes",
+        "node-native-build"
+      ],
+      "scripts": [
+        "skills/python-native-build/scripts/check-toolchain.sh"
+      ]
     },
     {
       "name": "package-troubleshooting",
       "path": "skills/package-troubleshooting/SKILL.md",
-      "description": "Choose pkg versus apt, repair repository metadata and separate package from build failures.",
+      "description": "Diagnose pkg and apt failures on Termux (unable to locate package, stale or wrong mirrors, clock skew, hash mismatch, interrupted dpkg, libraries that fail to link after a partial upgrade) and separate them from build failures. Use when pkg or apt prints an error, when a Debian or Ubuntu package name is missing, or when a command dies with CANNOT LINK EXECUTABLE. Do NOT use to run broad upgrades, change mirrors, or clear caches before capturing the exact error, and do not use for compile errors (see python-native-build).",
       "triggers": [
         "pkg failed",
         "apt failed",
         "package not found",
-        "repository error"
+        "repository error",
+        "unable to locate package",
+        "cannot link executable",
+        "hash sum mismatch",
+        "dpkg interrupted"
       ],
       "required_capabilities": [
         "shell",
         "package_manager"
       ],
       "platform": "termux",
-      "risk_level": "medium"
+      "risk_level": "medium",
+      "related": [
+        "termux-environment",
+        "proot-boundaries",
+        "python-native-build",
+        "termux-network",
+        "termux-backup"
+      ],
+      "scripts": [
+        "skills/package-troubleshooting/scripts/check-pkg-state.sh"
+      ]
     },
     {
       "name": "storage-permissions",
       "path": "skills/storage-permissions/SKILL.md",
-      "description": "Diagnose Android shared-storage access and Termux permission boundaries.",
+      "description": "Explain why a path is unreadable or unwritable on Termux (missing storage link, revoked Android permission, scoped storage, a filesystem without Unix modes or symlinks, a proot bind that was never made) and choose where files should live. Use for Permission denied, a missing ~/storage, /sdcard access, or git and venv failures on shared storage. Do NOT use for Termux API permission errors (see termux-api) or for ordinary file mode problems under $HOME.",
       "triggers": [
         "storage permission",
         "permission denied android",
-        "shared storage"
+        "shared storage",
+        "sdcard",
+        "termux-setup-storage",
+        "scoped storage"
       ],
       "required_capabilities": [
         "shell",
         "termux"
       ],
       "platform": "termux",
-      "risk_level": "low"
+      "risk_level": "low",
+      "related": [
+        "termux-environment",
+        "proot-boundaries",
+        "termux-backup",
+        "git-credentials"
+      ],
+      "scripts": [
+        "skills/storage-permissions/scripts/check-storage.sh"
+      ]
     },
     {
       "name": "proot-boundaries",
       "path": "skills/proot-boundaries/SKILL.md",
-      "description": "Determine whether a failure belongs to native Termux or a proot distro and choose the right package boundary.",
+      "description": "Decide whether a failure belongs to native Termux or a proot distro and which side should own the package, interpreter, and project path. Use when something works in one environment but not the other, when Ubuntu or Debian runs under Termux, when a glibc-only binary is needed, or before installing, backing up, or resetting a proot distro. Do NOT use for ordinary native Termux package errors, and never use proot-distro reset or remove as a generic repair.",
       "triggers": [
         "proot",
         "proot-distro",
         "ubuntu in termux",
-        "native termux"
+        "native termux",
+        "glibc",
+        "works in proot",
+        "debian in termux"
       ],
       "required_capabilities": [
         "shell",
         "process"
       ],
       "platform": "termux",
-      "risk_level": "medium"
+      "risk_level": "medium",
+      "related": [
+        "termux-environment",
+        "package-troubleshooting",
+        "python-native-build",
+        "storage-permissions",
+        "termux-backup"
+      ],
+      "scripts": [
+        "skills/proot-boundaries/scripts/detect-boundary.sh"
+      ]
     },
     {
       "name": "github-actions",
       "path": "skills/github-actions/SKILL.md",
-      "description": "Investigate failed GitHub Actions runs from local repositories without exposing credentials.",
+      "description": "Investigate a failed GitHub Actions run from Termux without exposing credentials or guessing at the workflow. Use when a workflow, CI job, or check failed, when it passes locally but fails on the runner, or before editing a file under .github/workflows. Do NOT use for local-only test failures with no CI involved, and do not suggest Docker-based local runners such as act, since Termux cannot run Docker.",
       "triggers": [
         "github action failed",
         "workflow failed",
-        "ci failed"
+        "ci failed",
+        "passes locally fails on ci",
+        "gh run",
+        "check failed"
       ],
       "required_capabilities": [
         "git",
         "github"
       ],
       "platform": "termux",
-      "risk_level": "low"
+      "risk_level": "low",
+      "related": [
+        "git-credentials",
+        "termux-network",
+        "termux-environment",
+        "python-native-build",
+        "node-native-build"
+      ],
+      "scripts": []
     },
     {
       "name": "termux-api",
       "path": "skills/termux-api/SKILL.md",
-      "description": "Determine whether Termux:API is installed, matched, and permitted before relying on termux-* commands.",
+      "description": "Attribute a hanging, empty, or failing termux-* command to the right layer (Termux:API app, termux-api package, or an Android runtime permission) before relying on it. Use when termux-battery-status, termux-notification, termux-clipboard-get, termux-location, or similar commands hang, print nothing, or report a permission error. Do NOT use for storage links (see storage-permissions), for commands inside proot, or for ordinary shell failures.",
       "triggers": [
         "termux-api",
         "termux api",
         "termux-battery-status",
-        "termux command hangs"
+        "termux command hangs",
+        "termux-notification",
+        "termux-clipboard-get",
+        "termux-location"
       ],
       "required_capabilities": [
         "shell",
         "termux"
       ],
       "platform": "termux",
-      "risk_level": "low"
+      "risk_level": "low",
+      "related": [
+        "termux-environment",
+        "background-processes",
+        "storage-permissions",
+        "proot-boundaries"
+      ],
+      "scripts": [
+        "skills/termux-api/scripts/check-termux-api.sh"
+      ]
     },
     {
       "name": "background-processes",
       "path": "skills/background-processes/SKILL.md",
-      "description": "Diagnose long-running processes that Android suspends or kills and choose the smallest mitigation.",
+      "description": "Decide whether a long-running Termux process exited, was suspended, or was killed by Android, and apply the smallest mitigation (lower parallelism, wake lock, battery settings, tmux, or the phantom process limit as a last resort). Use when a server, build, download, or script dies with the screen off, after Termux leaves the foreground, or with signal 9, exit code 137, or Process completed (signal 9). Do NOT use to tune Android settings for a process that simply exited with its own error.",
       "triggers": [
         "process killed",
         "signal 9",
+        "exit code 137",
         "background process",
         "wake lock",
-        "phantom process"
+        "phantom process",
+        "dies when screen off",
+        "process completed"
       ],
       "required_capabilities": [
         "shell",
         "process"
       ],
       "platform": "termux",
-      "risk_level": "medium"
+      "risk_level": "medium",
+      "related": [
+        "termux-services",
+        "termux-environment",
+        "python-native-build",
+        "node-native-build",
+        "termux-sshd"
+      ],
+      "scripts": [
+        "skills/background-processes/scripts/check-process-limits.sh"
+      ]
     },
     {
       "name": "git-credentials",
       "path": "skills/git-credentials/SKILL.md",
-      "description": "Diagnose git clone and push authentication from Termux without exposing tokens or private keys.",
+      "description": "Diagnose git clone, fetch, and push authentication failures from Termux without exposing tokens or private keys (HTTPS tokens, SSH keys, host key prompts, wrong account, missing scopes). Use for Authentication failed, HTTP 403, Permission denied (publickey), repeated credential prompts, or key permission warnings. Do NOT use for network outages, wrong remote names, or non-authentication rejections such as non-fast-forward.",
       "triggers": [
         "git push failed",
         "permission denied publickey",
         "authentication failed",
-        "ssh key"
+        "ssh key",
+        "http 403",
+        "credential prompt",
+        "host key verification failed"
       ],
       "required_capabilities": [
         "shell",
         "git"
       ],
       "platform": "termux",
-      "risk_level": "medium"
+      "risk_level": "medium",
+      "related": [
+        "storage-permissions",
+        "termux-network",
+        "github-actions",
+        "termux-sshd"
+      ],
+      "scripts": [
+        "skills/git-credentials/scripts/check-git-auth.sh"
+      ]
+    },
+    {
+      "name": "node-native-build",
+      "path": "skills/node-native-build/SKILL.md",
+      "description": "Diagnose npm and Node installs that fail on Termux (node-gyp errors such as android_ndk_path, missing compilers, packages with no android binary, optional platform dependencies, out-of-memory builds) and pick the smallest fix, including WASM fallbacks. Use when npm install, yarn, pnpm, or node-gyp fails, or a package reports an unsupported platform android. Do NOT use for Python builds (see python-native-build) or for JavaScript logic errors.",
+      "triggers": [
+        "npm install failed",
+        "node-gyp",
+        "android_ndk_path",
+        "unsupported platform android",
+        "gyp err",
+        "cannot find module native",
+        "npm build error"
+      ],
+      "required_capabilities": [
+        "shell",
+        "node"
+      ],
+      "platform": "termux",
+      "risk_level": "medium",
+      "related": [
+        "termux-environment",
+        "package-troubleshooting",
+        "background-processes",
+        "proot-boundaries",
+        "python-native-build"
+      ],
+      "scripts": [
+        "skills/node-native-build/scripts/check-node-toolchain.sh"
+      ]
+    },
+    {
+      "name": "termux-services",
+      "path": "skills/termux-services/SKILL.md",
+      "description": "Choose how to keep a program running on Termux (tmux or nohup, Termux:Boot, or termux-services with runit) and set it up with supervision and logs. Use when a server must restart after a crash, start at boot or app launch, or survive closing the terminal. Do NOT use when the process is being killed by Android (see background-processes first) or for one-off foreground commands.",
+      "triggers": [
+        "termux-services",
+        "termux boot",
+        "run on boot",
+        "autostart",
+        "restart on crash",
+        "sv-enable",
+        "runit",
+        "keep server running"
+      ],
+      "required_capabilities": [
+        "shell",
+        "process"
+      ],
+      "platform": "termux",
+      "risk_level": "medium",
+      "related": [
+        "background-processes",
+        "termux-sshd",
+        "termux-network",
+        "termux-environment"
+      ],
+      "scripts": [
+        "skills/termux-services/scripts/check-services.sh"
+      ]
+    },
+    {
+      "name": "termux-sshd",
+      "path": "skills/termux-sshd/SKILL.md",
+      "description": "Set up, harden, and debug the OpenSSH server on Termux (port 8022, key authentication, connection refused, permission denied, host key warnings). Use when the user wants to log in to the phone from a computer, or an ssh connection to Termux fails. Do NOT use for outbound ssh and git keys (see git-credentials), and never expose the server beyond a trusted network.",
+      "triggers": [
+        "termux sshd",
+        "ssh into phone",
+        "port 8022",
+        "connection refused termux",
+        "sshd not starting",
+        "authorized_keys termux",
+        "login to termux from pc"
+      ],
+      "required_capabilities": [
+        "shell",
+        "network"
+      ],
+      "platform": "termux",
+      "risk_level": "medium",
+      "related": [
+        "termux-services",
+        "termux-network",
+        "background-processes",
+        "git-credentials"
+      ],
+      "scripts": [
+        "skills/termux-sshd/scripts/check-sshd.sh"
+      ]
+    },
+    {
+      "name": "termux-backup",
+      "path": "skills/termux-backup/SKILL.md",
+      "description": "Create and verify a restorable snapshot of Termux home and prefix before risky changes, and restore it safely. Use when about to do a major upgrade, proot reset, Termux reinstall, or mass package change, or when asked to back up or migrate Termux. Do NOT use as a substitute for version control of project code, and do not restore over a working installation without explicit confirmation.",
+      "triggers": [
+        "backup termux",
+        "restore termux",
+        "migrate termux",
+        "snapshot termux",
+        "before upgrade backup",
+        "termux tar backup"
+      ],
+      "required_capabilities": [
+        "shell",
+        "tar"
+      ],
+      "platform": "termux",
+      "risk_level": "medium",
+      "related": [
+        "termux-environment",
+        "storage-permissions",
+        "proot-boundaries",
+        "package-troubleshooting"
+      ],
+      "scripts": [
+        "skills/termux-backup/scripts/estimate-backup-size.sh"
+      ]
+    },
+    {
+      "name": "termux-network",
+      "path": "skills/termux-network/SKILL.md",
+      "description": "Diagnose network problems inside Termux (DNS, TLS certificate errors, clock skew, proxies, binding ports, reaching a Termux server from the phone or LAN) given Android's restrictions on interfaces and low ports. Use when curl, pip, git, or a local server cannot connect, when ifconfig or netstat show nothing, or when TLS reports a certificate not yet valid. Do NOT use for Wi-Fi or carrier faults outside the device, or for sshd specifics (see termux-sshd).",
+      "triggers": [
+        "termux no internet",
+        "dns failure",
+        "certificate verify failed",
+        "ifconfig empty",
+        "cannot bind port",
+        "curl failed termux",
+        "certificate not yet valid"
+      ],
+      "required_capabilities": [
+        "shell",
+        "network"
+      ],
+      "platform": "termux",
+      "risk_level": "low",
+      "related": [
+        "termux-environment",
+        "package-troubleshooting",
+        "git-credentials",
+        "termux-sshd"
+      ],
+      "scripts": [
+        "skills/termux-network/scripts/check-network.sh"
+      ]
     }
   ]
 }

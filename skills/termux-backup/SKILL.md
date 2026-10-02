@@ -1,6 +1,6 @@
 ---
 name: termux-backup
-description: Create and verify a restorable snapshot of Termux home and prefix before risky changes, and restore it safely. Use before major upgrades, proot resets, reinstalling Termux, or mass package changes, or when asked to back up or migrate Termux. Do NOT use as a substitute for version control of project code, and do not restore over a working installation without explicit confirmation.
+description: Create and verify a restorable snapshot of Termux home and prefix before risky changes, and restore it safely. Use when about to do a major upgrade, proot reset, Termux reinstall, or mass package change, or when asked to back up or migrate Termux. Do NOT use as a substitute for version control of project code, and do not restore over a working installation without explicit confirmation.
 triggers: backup termux,restore termux,migrate termux,snapshot termux,before upgrade backup,termux tar backup
 risk: medium
 ---
@@ -34,7 +34,7 @@ Run `sh scripts/estimate-backup-size.sh [target-dir]` (read-only). Decide scope:
 Creating an archive writes a large file and uses storage; state size and destination first. Restoring overwrites files: name what will be replaced and get explicit confirmation. Never print archive contents beyond a name listing.
 
 ## Verification
-List the archive (`tar -tzf <archive>`) and confirm expected top-level entries and non-trivial size. For a restore, run `sh ../termux-environment/scripts/detect-environment.sh` afterwards and test one package and one config file.
+List the archive (`tar -tzf <archive>`) and confirm expected top-level entries and non-trivial size. For a restore, take a fresh environment snapshot (`termux-environment`) afterwards and test one package and one config file.
 
 ## Rollback
 A backup needs none. For a restore, keep the previous state's archive until the restored installation is verified.
