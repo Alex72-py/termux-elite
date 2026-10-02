@@ -1,11 +1,20 @@
 # Changelog
 
+## 0.4.0 - 2026-10-02
+
+- Host support: Claude Code (plugin and marketplace), Antigravity CLI (`plugin.json`), Gemini CLI (extension manifest and `skills install`), OpenCode, Codex, Cursor, Kiro, and any host that reads `AGENTS.md` or skill directories.
+- `scripts/sync_hosts.py` generates every host manifest and `AGENTS.md` from `manifest.json`; `--check` fails when they drift.
+- `scripts/install.sh` installs skills into a host's skill directory (copy or `--link`, `--project`, `--skill`, `--dry-run`, `--uninstall`) and never touches skills it did not install.
+- Adapter docs rewritten with current install commands and discovery paths; OpenCode adapter added.
+- README is now host-neutral; removed the section that described a specific separate project.
+- Tests for generated files, host identity and versions, and the installer across every host and scope.
+
 ## 0.3.0 - 2026-10-02
 
 - Rewrote all nine skills to a stricter standard: trigger-rich descriptions with explicit "Do NOT use" clauses, symptom-driven decision trees, Termux-specific facts, `Handoffs`, and a `Report` contract.
 - Added skills: `node-native-build`, `termux-services`, `termux-sshd`, `termux-backup`, `termux-network`.
 - Added read-only helper scripts for every skill; manifest entries now carry `related` and `scripts`.
-- Removed a host-specific phrase ("Guardian confirmation") from `package-troubleshooting`.
+- Removed host-specific wording from `package-troubleshooting` so the skill stays portable.
 - Tests: description discoverability, YAML validity, required sections, rollback for medium risk, handoff integrity, script and SKILL.md agreement, credential redaction, hostname rejection, word-boundary read-only check.
 - CI installs PyYAML so the frontmatter is validated as real YAML.
 

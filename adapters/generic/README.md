@@ -1,12 +1,27 @@
-# Generic agent adapter
+# Other agents
 
-A host agent only needs filesystem access and a way to run its own tools:
+A host needs filesystem access and a way to read `manifest.json` or `AGENTS.md`. Skill-aware hosts can use the installer; everything else can route from the generated index.
 
-1. Parse `manifest.json`.
-2. Match request text against `triggers` and descriptions.
-3. Check `required_capabilities` and `platform`.
-4. Read the chosen `SKILL.md`.
-5. Execute only through the host’s explicit tool and confirmation policy.
-6. Use the skill’s verification and rollback sections when reporting completion.
+| Host | Install |
+| --- | --- |
+| Codex | `codex plugin marketplace add https://github.com/Alex72-py/termux-elite`, then `codex plugin add termux-elite@termux-elite` (uses `.codex-plugin/plugin.json` and `.agents/plugins/marketplace.json`) |
+| Cursor | `/add-plugin Alex72-py/termux-elite` (uses `.cursor-plugin/plugin.json`) |
+| Kiro | `sh scripts/install.sh kiro` (`~/.kiro/skills`, or `--project` for `.kiro/skills`) |
+| Any host that reads `.agents/skills` | `sh scripts/install.sh agents` |
+| Anything that reads `AGENTS.md` | Point it at this repository; `AGENTS.md` carries the routing index and rules |
 
-The skill pack does not assume a particular model, prompt format, tool protocol, or agent runtime.
+The Codex, Cursor, and marketplace manifests use the same shape as Google's published `gemini-skills` repository. They are generated and checked by tests, but this repository has not run them end to end on every host.
+
+## Using the manifest directly
+
+```python
+import json, pathlib
+
+root = pathlib.Path("termux-elite")
+manifest = json.loads((root / "manifest.json").read_text())
+request = "pip install cryptography failed with a build error"
+hits = [s for s in manifest["skills"] if any(t in request.lower() for t in s["triggers"])]
+print([s["path"] for s in hits])
+```
+
+Read the selected `SKILL.md` before proposing commands, run its `scripts/` helper for facts, then follow the decision tree. Map `required_capabilities` to the tools your host actually has, and refuse a skill when a capability is missing. The host owns confirmation, cancellation, and output redaction.
