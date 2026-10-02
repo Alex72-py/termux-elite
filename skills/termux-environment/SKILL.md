@@ -1,34 +1,46 @@
 ---
 name: termux-environment
-description: Detect native Termux, Android, architecture, tools, storage and resource constraints.
-triggers: termux environment,android environment,what is installed
+description: Take a small read-only snapshot of a Termux or Android shell (native or proot, Android and Termux version, CPU architecture, installed toolchains, free storage and memory) before choosing a package manager, path, or fix. Use when a task depends on what the device is, when asked what is installed or which architecture applies, or at the start of any Termux debugging session. Do NOT use as a ritual before every command, for plain text questions, or to change anything.
+triggers: termux environment,android environment,what is installed,which architecture,am i in proot,termux version,android version
 risk: low
 ---
 # Termux Environment
 
 ## Purpose
-Build a small factual snapshot before choosing a package manager, filesystem path, or Android integration strategy.
+Build a small factual snapshot so later decisions rest on measured facts, not on assumptions about the phone, the shell, or the distro.
 
 ## When to use
-Use when a request depends on Android, Termux, architecture, available binaries, storage, RAM, or whether the shell is native or inside another environment.
+- A fix depends on Android version, CPU architecture, free space, or installed toolchains.
+- It is unclear whether the shell is native Termux or a proot distro.
+- Any other skill in this pack says to capture the environment first.
 
 ## When NOT to use
-Do not run a full inventory for an ordinary text question or before every command. Cache the result and refresh after an environment change.
+- Plain text questions, or a command whose result does not depend on the device.
+- Before every command. Cache the snapshot; refresh only after a package upgrade, entering or leaving proot, or reinstalling Termux.
 
 ## Preconditions
-Only read-only shell access is required. Do not require root, Termux:API, or network access.
-
-## Detect environment
-Run `scripts/detect-environment.sh`. Record `uname -srm`, `PREFIX`, `TERMUX_VERSION`, package-manager availability, Python version, and whether `$HOME/storage/shared` exists. Check `/proc/1/root` and `PROOT_TMP_DIR` as hints, not proof.
+Read-only shell only. No root, network, or Termux:API required.
 
 ## Decision tree
-1. If `PREFIX` points under `/data/data/com.termux`, treat the shell as native Termux.
-2. If `proot-distro` or proot markers are present, identify the distro separately; do not mix its packages with native Termux packages.
-3. Choose architecture from `uname -m`, not an assumed phone model.
-4. If shared storage is absent, treat Android storage permission as unresolved rather than as a generic Unix permission error.
-
-## Verification
-Report only facts relevant to the requested operation. Keep the raw snapshot available for later tools.
+1. Run `sh scripts/detect-environment.sh`. It prints `key: value` lines and never dumps the environment.
+2. `prefix` of the form `/data/data/<app-id>/files/usr` means native Termux (`com.termux` for the standard app). `prefix: unset` plus a Debian or Ubuntu `os_release_id` suggests a proot distro; confirm with `proot-boundaries`. Hints are not proof.
+3. Architecture comes from `architecture`, never from the phone model. `aarch64` is the common case. `armv7l` or `armv8l` means a 32-bit userland, where many prebuilt wheels and binaries do not exist. `x86_64` is an emulator or Chromebook.
+4. `android_sdk` selects which Android behavior applies. Report these as version-specific: background clipboard reads are restricted from Android 10; recent releases restrict network interface listing (`ip`, `ifconfig`, `netstat`); Android 12 and later kill excess child processes (see `background-processes`).
+5. Hard-coded `/tmp`, `/bin/sh`, or `#!/usr/bin/env` fail on a bare Android layout. Termux uses `$TMPDIR` (`$PREFIX/tmp`) and `$PREFIX/bin/sh`, and `termux-exec` rewrites shebangs. Fix the path or variable, not the system.
+6. Under about 1 GiB free storage or available memory: warn before any compile, `pkg upgrade`, or large download.
+7. Termux and its plugin apps (Termux:API, Boot, Widget) must come from the same distribution source and signing key, or plugins fail to talk to Termux.
 
 ## Safety
-All checks are read-only. Never modify storage, install packages, or request permissions from this skill.
+Everything here is read-only. `termux-info` prints the device model and the full package list, so share only the lines the task needs. Never print `env` wholesale; it can contain tokens.
+
+## Verification
+Every reported fact came from command output in this session. Say `unknown` for anything the script could not read.
+
+## Handoffs
+- `proot-boundaries` when native versus proot is unclear or mixed.
+- `package-troubleshooting` when no package manager is found or indexes look stale.
+- `storage-permissions` when `storage_shared` is absent.
+- `python-native-build` when a build needs the toolchain list.
+
+## Report
+At most six lines: side (native or proot), architecture, Android API level, Termux version, free storage and memory, and any missing tool that matters for the task.
