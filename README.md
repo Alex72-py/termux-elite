@@ -2,9 +2,9 @@
 
 ![ci](https://github.com/Alex72-py/termux-elite/actions/workflows/ci.yml/badge.svg)
 
-Operational skills for AI agents working inside Termux and Android. Each skill is a short, verified procedure: what to inspect first, which layer is failing, what is safe to change, how to confirm the fix, and what to hand off.
+Operational skills for AI coding agents working inside Termux and Android. Each skill is a short, verified procedure: what to inspect first, which layer is failing, what is safe to change, how to confirm the fix, and what to hand off.
 
-This repository is a **knowledge and procedure layer**, not a shell, framework, or pile of copy-paste commands. The agent still owns confirmation and execution.
+This repository is a knowledge and procedure layer, not a shell or framework. The agent still owns confirmation and execution.
 
 ## Skills
 
@@ -27,51 +27,59 @@ This repository is a **knowledge and procedure layer**, not a shell, framework, 
 
 Every skill follows one standard (see [CONTRIBUTING.md](CONTRIBUTING.md)): a description written to trigger on real symptoms, a decision tree that starts with the cheapest read-only check, explicit safety and rollback, a verification command, handoffs to sibling skills, and a short report contract.
 
+## Install
+
+| Host | Install |
+| --- | --- |
+| Claude Code | `/plugin marketplace add Alex72-py/termux-elite`, then `/plugin install termux-elite@termux-elite` |
+| Antigravity CLI (`agy`) | `agy plugin install https://github.com/Alex72-py/termux-elite.git` |
+| Gemini CLI | `gemini skills install https://github.com/Alex72-py/termux-elite.git --path skills` (or `gemini extensions install https://github.com/Alex72-py/termux-elite`) |
+| OpenCode | `sh scripts/install.sh opencode` |
+| Codex | `codex plugin marketplace add https://github.com/Alex72-py/termux-elite`, then `codex plugin add termux-elite@termux-elite` |
+| Cursor | `/add-plugin Alex72-py/termux-elite` |
+| Kiro and others | `sh scripts/install.sh kiro` or `sh scripts/install.sh agents` |
+
+From a clone, the installer works on any host that reads skill directories, including inside Termux itself:
+
+```sh
+git clone https://github.com/Alex72-py/termux-elite.git
+cd termux-elite
+sh scripts/install.sh claude --dry-run    # see what would change
+sh scripts/install.sh claude              # install (managed copy)
+sh scripts/install.sh claude --uninstall  # remove only what it installed
+```
+
+The installer copies by default (use `--link` to symlink), supports `--project` and `--skill NAME`, and never overwrites or removes a skill it did not install. Per-host details, discovery paths, and caveats are in [adapters/](adapters/).
+
 ## Layout
 
 ```text
 manifest.json                  discovery index (name, triggers, capabilities, risk, related, scripts)
 skills/<name>/SKILL.md         the procedure (Agent Skills layout: name + description frontmatter)
 skills/<name>/scripts/         small read-only helpers that print key: value facts
-skills/<name>/references/      deeper material, when a skill needs it
-adapters/<agent>/              integration notes for a host agent
+AGENTS.md                      generated routing index and rules, for hosts that load context files
+scripts/install.sh             installer for hosts that read skill directories
+scripts/sync_hosts.py          generates host manifests and AGENTS.md from manifest.json
+.claude-plugin/ plugin.json gemini-extension.json .codex-plugin/ .cursor-plugin/ .agents/plugins/
+                               generated host manifests (do not edit by hand)
+adapters/<host>/               notes for each host
 docs/SKILL_TEMPLATE.md         starting point for a new skill
-tests/                         manifest, frontmatter, section, handoff and script checks
+tests/                         manifest, frontmatter, section, handoff, script, host and installer checks
 ```
 
-## Use it
+## Use it from your own agent
 
-Skills use the common `SKILL.md` layout, so hosts that load skills from a directory can read them directly. With Claude Code, for example, link or copy the skill folders into `~/.claude/skills/` (user) or `.claude/skills/` (project). Other hosts can use `manifest.json` as the catalog; see `adapters/`.
-
-```python
-import json, pathlib
-
-root = pathlib.Path("termux-elite")
-manifest = json.loads((root / "manifest.json").read_text())
-request = "pip install cryptography failed with a build error"
-hits = [s for s in manifest["skills"] if any(t in request.lower() for t in s["triggers"])]
-print([s["path"] for s in hits])
-```
-
-Read the selected `SKILL.md` before proposing commands. Run its `scripts/` helper for facts, then follow the decision tree.
-
-## Use from ARIA
-
-```sh
-export ARIA_SKILLS_PATH="$HOME/src/termux-elite"
-python run_aria.py
-```
-
-ARIA can consume any directory with the same `manifest.json` and `skills/*/SKILL.md` shape. The dependency is optional.
+Any agent that can read files can route from `manifest.json`. See [adapters/generic](adapters/generic/README.md) for a short example.
 
 ## Verify the repository
 
 ```sh
 python -m pip install pytest pyyaml
+python scripts/sync_hosts.py --check
 python -m pytest -q
 ```
 
-The tests check that every skill is listed and consistent with its manifest entry, that descriptions are discoverable and valid YAML, that required sections and rollback exist, that handoffs point at real skills, that helper scripts are executable, read-only, and agree with `SKILL.md`, and that no obvious secrets are committed.
+The tests check that every skill is consistent with its manifest entry, that descriptions are discoverable and valid YAML, that handoffs point at real skills, that helper scripts are executable, read-only, and agree with `SKILL.md`, that generated host files are current, that the installer behaves safely for every host, and that no secrets are committed.
 
 ## Design rules
 

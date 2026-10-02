@@ -1,0 +1,22 @@
+{
+  "name": "termux-elite",
+  "interface": {
+    "displayName": "Termux Elite"
+  },
+  "plugins": [
+    {
+      "name": "termux-elite",
+      "version": "0.4.0",
+      "description": "Portable operational skills for agents working inside Termux and Android environments.",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

@@ -1,13 +1,29 @@
-# Claude Code adapter
+# Claude Code
 
-Expose `skills/*/SKILL.md` as project or user instructions that are searchable by task trigger. Keep the skill files outside the application source when possible and point the agent at the repository root.
+## Install
 
-Recommended workflow:
+Plugin (recommended):
 
-1. Make the repository available in the workspace.
-2. Read `manifest.json` to build the skill index.
-3. Select a skill when its trigger and required capabilities match the request.
-4. Read the selected `SKILL.md` before proposing commands.
-5. Treat `risk_level` as a planning signal; the host agent still owns confirmation and execution.
+```text
+/plugin marketplace add Alex72-py/termux-elite
+/plugin install termux-elite@termux-elite
+```
 
-Do not copy the whole repository into every prompt. Load the manifest first and retrieve only the selected skill and any referenced material.
+Plain skills, without the plugin system:
+
+```sh
+sh scripts/install.sh claude              # ~/.claude/skills
+sh scripts/install.sh claude --project    # ./.claude/skills
+```
+
+## How it works
+
+Claude Code loads each skill's `name` and `description` and reads the full `SKILL.md` only when a task matches, so the symptom-rich descriptions are what route the work. Helper scripts run through the normal Bash tool and its permission prompts.
+
+The plugin is declared in `.claude-plugin/plugin.json`. The marketplace entry in `.claude-plugin/marketplace.json` points at the repository root, where Claude Code finds `skills/`.
+
+## Notes
+
+- Start a new session after installing so the skills are rescanned.
+- OpenCode also reads `~/.claude/skills`, so this install covers both.
+- The manifests are generated from `manifest.json` by `python scripts/sync_hosts.py`; do not edit them by hand.

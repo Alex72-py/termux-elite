@@ -17,7 +17,8 @@ A skill belongs here only if it encodes a repeatable operational decision for ag
 2. Required sections: `## Purpose`, `## When to use`, `## When NOT to use`, `## Decision tree`, `## Safety`, `## Verification`, `## Handoffs`, `## Report`. Medium and high risk skills also need `## Rollback`. Keep the body under 150 lines; move depth into `references/`.
 3. Frontmatter holds `name`, `description`, `triggers` (comma separated) and `risk`. Add a matching manifest entry with `required_capabilities`, `platform`, `risk_level`, `related` (the skills listed in Handoffs, same order is not required) and `scripts`.
 4. Helper scripts go in `skills/<name>/scripts/`, start with a shebang, use `set -eu`, stay read-only, are executable, exit 0, print `key: value` facts, and pass `shellcheck -S warning`. Reference each one from `SKILL.md` as `scripts/<file>.sh`.
-5. Run `python -m pytest -q`.
+5. Run `python scripts/sync_hosts.py` to refresh the generated host files (`AGENTS.md` and the plugin manifests). Never edit those by hand.
+6. Run `python -m pytest -q`.
 
 ## Rules
 
