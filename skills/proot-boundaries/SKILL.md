@@ -1,29 +1,52 @@
 ---
 name: proot-boundaries
-description: Determine whether a failure belongs to native Termux or a proot distro and choose the right package boundary.
-triggers: proot,proot-distro,ubuntu in termux,native termux
+description: Decide whether a failure belongs to native Termux or a proot distro and which side should own the package, interpreter, and project path. Use when something works in one environment but not the other, when Ubuntu or Debian runs under Termux, when a glibc-only binary is needed, or before installing, backing up, or resetting a proot distro. Do NOT use for ordinary native Termux package errors, and never use proot-distro reset or remove as a generic repair.
+triggers: proot,proot-distro,ubuntu in termux,native termux,glibc,works in proot,debian in termux
 risk: medium
 ---
 # Native Termux and proot Boundaries
 
 ## Purpose
-Prevent packages, paths, and assumptions from leaking across the native Termux and proot environments.
+Stop packages, paths, and assumptions from leaking between native Termux and a proot distro, and pick the side that should own a given task.
 
 ## When to use
-Use when a command behaves differently in Ubuntu/Debian under Termux, when Android APIs are unavailable, or when a native build/package decision is unclear.
+- A command behaves differently in a proot Ubuntu or Debian than in native Termux.
+- An Android-facing feature (Termux:API, storage links) is missing inside proot.
+- A prebuilt glibc binary or wheel is needed.
+- Before installing, backing up, resetting, or removing a distro.
 
-## Detect environment
-Collect `uname -a`, `$PREFIX`, `command -v pkg apt`, `/proc/1/root`, and proot-distro state. Treat a prompt label alone as unreliable.
+## When NOT to use
+- The shell is clearly native Termux and the error is a plain `pkg` or build error: use `package-troubleshooting` or `python-native-build`.
+- As a reason to move work into proot by default. Proot costs storage, I/O speed, and ptrace overhead.
+
+## Preconditions
+Run `sh scripts/detect-boundary.sh`. Treat a prompt label as unreliable; use `$PREFIX`, `tracer_pid`, `os_release_id`, and the installed distro list as evidence.
 
 ## Decision tree
-1. Native Termux uses Android/Bionic assumptions and `pkg`.
-2. A proot distro has its own userspace and package manager, but still runs under Android constraints.
-3. Android-facing commands such as Termux:API, storage links, and `termux-*` binaries usually belong to the native side.
-4. Build dependencies for a process should be installed in the environment that launches that process.
-5. Cross-boundary paths and networking must be tested rather than assumed.
+1. Native Termux uses Android and Bionic conventions and `pkg`. A proot distro has its own userspace, libc (usually glibc), and package manager, but still runs under Android's process and storage limits.
+2. Android-facing commands (`termux-*`, storage links) belong to the native side.
+3. Install build dependencies on the side that launches the process. Binaries do not move across the boundary.
+4. Choose proot when the task needs glibc-only prebuilt binaries or Debian packages that Termux lacks. Choose native when it needs Termux:API, shared storage, services, or speed.
+5. The network is shared with the host. Ports and `localhost` behave the same on both sides.
+6. Files are not shared unless bound. A project under the distro's `/root` is not under Termux `$HOME`, and the reverse needs a bind at login.
+7. There is no systemd and no real init inside proot. Service questions go to `termux-services` on the native side.
+8. Cross-boundary paths and networking must be tested, not assumed.
 
 ## Safety
-Installing or removing a proot distro is a mutating operation. Do not recommend `proot-distro reset` as a generic repair; it can destroy the distro filesystem.
+Installing, resetting, or removing a distro is destructive to everything inside it. Back up first (`proot-distro backup <alias>` where the installed version supports it, or `termux-backup`), name exactly what will be lost, and get confirmation. Do not recommend `proot-distro reset` or `remove` as a generic repair.
 
 ## Verification
-Report which side owns the process, package manager, Python interpreter, and project path before proposing a fix.
+Report which side owns the process, package manager, interpreter, and project path, then run the failing command on that side.
+
+## Rollback
+Keep the distro backup until the new setup is verified. Restore only after confirmation.
+
+## Handoffs
+- `termux-environment` for a fuller snapshot.
+- `package-troubleshooting` for native `pkg` errors.
+- `python-native-build` when a glibc wheel is the real problem.
+- `storage-permissions` when a path is invisible inside proot.
+- `termux-backup` before any destructive distro operation.
+
+## Report
+Which side owns each of process, package manager, interpreter, and project path, and whether proot is justified or native Termux is enough.
