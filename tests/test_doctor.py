@@ -85,3 +85,13 @@ def test_failing_helper_is_reported_and_does_not_stop_the_run(tmp_path):
     assert "helper exited with status 3" in r.stdout
     assert "Done." in r.stdout
     assert len(headers(r.stdout)) == len(SCRIPTS)
+
+
+@pytest.mark.parametrize("script", SCRIPTS, ids=[str(s.relative_to(ROOT)) for s in SCRIPTS])
+def test_each_helper_leaves_home_untouched(script, tmp_path):
+    home = tmp_path / "home"
+    home.mkdir()
+    env = dict(os.environ, HOME=str(home))
+    subprocess.run(["sh", str(script)], cwd=str(tmp_path), env=env,
+                   capture_output=True, text=True, timeout=60)
+    assert sorted(str(p) for p in home.rglob("*")) == [], "%s wrote under HOME" % script.name
