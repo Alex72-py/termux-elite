@@ -21,7 +21,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install test dependencies
         run: python -m pip install pytest pyyaml
-      - name: Lint shell helpers
-        run: shellcheck -S warning skills/*/scripts/*.sh
+      - name: Lint shell scripts
+        run: shellcheck -S warning scripts/*.sh skills/*/scripts/*.sh
+      - name: Check generated host files
+        run: python scripts/sync_hosts.py --check
       - name: Run tests
         run: python -m pytest -q
