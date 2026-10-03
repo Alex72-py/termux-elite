@@ -1,7 +1,7 @@
 ---
 name: termux-backup
 description: Create and verify a restorable snapshot of Termux home and prefix before risky changes, and restore it safely. Use when about to do a major upgrade, proot reset, Termux reinstall, or mass package change, or when asked to back up or migrate Termux. Do NOT use as a substitute for version control of project code, and do not restore over a working installation without explicit confirmation.
-triggers: backup termux,restore termux,migrate termux,snapshot termux,before upgrade backup,termux tar backup
+triggers: backup termux,restore termux,migrate termux,snapshot termux,before upgrade backup,termux tar backup,lose my setup,reset my phone,new phone move,restore point
 risk: medium
 ---
 # Termux Backup and Restore

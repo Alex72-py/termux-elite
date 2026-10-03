@@ -25,13 +25,14 @@ Capture, read-only: the full error, the requested package, `dpkg --print-archite
 ## Decision tree
 1. Native Termux uses `pkg` (a wrapper around `apt`). A proot distro uses its own `apt`.
 2. `Release file ... is not valid yet` or TLS date errors: the device clock is wrong. Fix the date (automatic time in Android settings) before touching repositories.
-3. `Unable to locate package`: stale indexes, a Debian-style name, or an absent package. Termux package names differ from Debian. Examples: `python3-dev` has no equivalent (headers ship with `python`); `libssl-dev` is `openssl`; `build-essential` is `clang make`; `libffi-dev` is `libffi`. Search with `pkg search <word>` before concluding it is absent.
-4. `Hash Sum mismatch` or a 404 or timeout from a mirror: the mirror is out of sync or down. Retry once, then consider a different mirror (a confirmed, separate action).
-5. `dpkg was interrupted`, `Sub-process dpkg returned an error`: preserve the output, then the repair is `dpkg --configure -a`, a mutating step that needs confirmation.
-6. `CANNOT LINK EXECUTABLE ... library "lib....so" not found`: usually a partial upgrade. Termux does not support partial upgrades; the fix is a complete `pkg update` followed by `pkg upgrade`, confirmed by the user.
-7. `No space left on device`: check free space; `pkg clean` removes downloaded archives only.
-8. Never copy Debian or Ubuntu `sources.list` entries into Termux. Different libc, different paths: it breaks the installation.
-9. Resolution succeeds but compilation fails: hand off.
+3. Many unrelated `pkg` failures on an old install: check the install source. The Google Play build of Termux is deprecated and no longer updated, so its repositories and packages fall behind. `TERMUX_APK_RELEASE` (printed as `termux_apk_release` by the `termux-environment` helper) is `F_DROID`, `GITHUB`, `GOOGLE_PLAY_STORE`, or `UNKNOWN`. Moving to another source generally means uninstalling and reinstalling, because builds from different sources are signed with different keys, so it destroys app data. Recommend `termux-backup` first and never do it without confirmation.
+4. `Unable to locate package`: stale indexes, a Debian-style name, or an absent package. Termux package names differ from Debian. Examples: `python3-dev` has no equivalent (headers ship with `python`); `libssl-dev` is `openssl`; `build-essential` is `clang make`; `libffi-dev` is `libffi`. Search with `pkg search <word>` before concluding it is absent.
+5. `Hash Sum mismatch` or a 404 or timeout from a mirror: the mirror is out of sync or down. Retry once, then consider a different mirror (a confirmed, separate action).
+6. `dpkg was interrupted`, `Sub-process dpkg returned an error`: preserve the output, then the repair is `dpkg --configure -a`, a mutating step that needs confirmation.
+7. `CANNOT LINK EXECUTABLE ... library "lib....so" not found`: usually a partial upgrade. Termux does not support partial upgrades; the fix is a complete `pkg update` followed by `pkg upgrade`, confirmed by the user.
+8. `No space left on device`: check free space; `pkg clean` removes downloaded archives only.
+9. Never copy Debian or Ubuntu `sources.list` entries into Termux. Different libc, different paths: it breaks the installation.
+10. Resolution succeeds but compilation fails: hand off.
 
 ## Safety
 `pkg install`, `pkg upgrade`, `pkg update`, mirror changes (`termux-change-repo`), and dpkg repair all mutate local state and can use large storage or break pinned dependencies. Run read-only status and search first, present each change separately, and get confirmation.

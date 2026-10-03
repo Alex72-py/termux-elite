@@ -1,7 +1,7 @@
 ---
 name: git-credentials
 description: Diagnose git clone, fetch, and push authentication failures from Termux without exposing tokens or private keys (HTTPS tokens, SSH keys, host key prompts, wrong account, missing scopes). Use for Authentication failed, HTTP 403, Permission denied (publickey), repeated credential prompts, or key permission warnings. Do NOT use for network outages, wrong remote names, or non-authentication rejections such as non-fast-forward.
-triggers: git push failed,permission denied publickey,authentication failed,ssh key,http 403,credential prompt,host key verification failed
+triggers: git push failed,permission denied publickey,authentication failed,ssh key,http 403,credential prompt,host key verification failed,git asks for password,cannot upload commits,push rejected,authentication rejected
 risk: medium
 ---
 # Git Credentials

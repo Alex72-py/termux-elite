@@ -13,6 +13,7 @@ show android_release "$(prop ro.build.version.release)"
 show android_sdk "$(prop ro.build.version.sdk)"
 show prefix "${PREFIX:-unset}"
 show termux_version "${TERMUX_VERSION:-unset}"
+show termux_apk_release "${TERMUX_APK_RELEASE:-unset}"
 show tmpdir "${TMPDIR:-unset}"
 
 tracer=$(awk '/^TracerPid:/ {print $2}' /proc/self/status 2>/dev/null || true)

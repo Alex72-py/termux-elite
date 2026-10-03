@@ -1,7 +1,7 @@
 ---
 name: github-actions
 description: Investigate a failed GitHub Actions run from Termux without exposing credentials or guessing at the workflow. Use when a workflow, CI job, or check failed, when it passes locally but fails on the runner, or before editing a file under .github/workflows. Do NOT use for local-only test failures with no CI involved, and do not suggest Docker-based local runners such as act, since Termux cannot run Docker.
-triggers: github action failed,workflow failed,ci failed,passes locally fails on ci,gh run,check failed
+triggers: github action failed,workflow failed,ci failed,passes locally fails on ci,gh run,check failed,pipeline red,works on my machine fails in ci,workflow red,build failed on github
 risk: low
 ---
 # GitHub Actions Investigation

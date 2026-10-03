@@ -75,7 +75,11 @@
         "unable to locate package",
         "cannot link executable",
         "hash sum mismatch",
-        "dpkg interrupted"
+        "dpkg interrupted",
+        "pkg upgrade broke things",
+        "library not found",
+        "outdated termux play store",
+        "mirror down"
       ],
       "required_capabilities": [
         "shell",
@@ -104,7 +108,11 @@
         "shared storage",
         "sdcard",
         "termux-setup-storage",
-        "scoped storage"
+        "scoped storage",
+        "downloads folder empty",
+        "save to gallery",
+        "cannot write to downloads",
+        "files not visible in file manager"
       ],
       "required_capabilities": [
         "shell",
@@ -162,7 +170,11 @@
         "ci failed",
         "passes locally fails on ci",
         "gh run",
-        "check failed"
+        "check failed",
+        "pipeline red",
+        "works on my machine fails in ci",
+        "workflow red",
+        "build failed on github"
       ],
       "required_capabilities": [
         "git",
@@ -250,7 +262,11 @@
         "ssh key",
         "http 403",
         "credential prompt",
-        "host key verification failed"
+        "host key verification failed",
+        "git asks for password",
+        "cannot upload commits",
+        "push rejected",
+        "authentication rejected"
       ],
       "required_capabilities": [
         "shell",
@@ -279,7 +295,11 @@
         "unsupported platform android",
         "gyp err",
         "cannot find module native",
-        "npm build error"
+        "npm build error",
+        "javascript package compile",
+        "native module fails",
+        "npm package needs compiling",
+        "node addon build"
       ],
       "required_capabilities": [
         "shell",
@@ -367,7 +387,11 @@
         "migrate termux",
         "snapshot termux",
         "before upgrade backup",
-        "termux tar backup"
+        "termux tar backup",
+        "lose my setup",
+        "reset my phone",
+        "new phone move",
+        "restore point"
       ],
       "required_capabilities": [
         "shell",
@@ -396,7 +420,12 @@
         "ifconfig empty",
         "cannot bind port",
         "curl failed termux",
-        "certificate not yet valid"
+        "certificate not yet valid",
+        "no internet in terminal",
+        "trust error",
+        "dns lookup fails",
+        "ssl error",
+        "cannot reach the internet"
       ],
       "required_capabilities": [
         "shell",

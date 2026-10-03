@@ -1,7 +1,7 @@
 ---
 name: termux-network
 description: Diagnose network problems inside Termux (DNS, TLS certificate errors, clock skew, proxies, binding ports, reaching a Termux server from the phone or LAN) given Android's restrictions on interfaces and low ports. Use when curl, pip, git, or a local server cannot connect, when ifconfig or netstat show nothing, or when TLS reports a certificate not yet valid. Do NOT use for Wi-Fi or carrier faults outside the device, or for sshd specifics (see termux-sshd).
-triggers: termux no internet,dns failure,certificate verify failed,ifconfig empty,cannot bind port,curl failed termux,certificate not yet valid
+triggers: termux no internet,dns failure,certificate verify failed,ifconfig empty,cannot bind port,curl failed termux,certificate not yet valid,no internet in terminal,trust error,dns lookup fails,ssl error,cannot reach the internet
 risk: low
 ---
 # Termux Network
