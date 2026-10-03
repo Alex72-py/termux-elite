@@ -48,6 +48,16 @@ The skill is a procedure, not a command to run blindly. See [examples/](examples
 
 Agents do not need this table: each skill's `description` lists the same symptoms, and [`AGENTS.md`](AGENTS.md) and [`manifest.json`](manifest.json) carry a routing index with a risk level per skill.
 
+## Triage in one command
+
+```sh
+sh scripts/doctor.sh                       # run every read-only helper, print one report
+sh scripts/doctor.sh --list                # show what it would run
+sh scripts/doctor.sh --skill termux-network
+```
+
+It prints facts only and changes nothing. Paste the report to your agent, then follow the skill for whichever layer looks wrong (device and install source, package manager, toolchain, network, storage, git auth).
+
 ## Safe by design
 
 - **Inspect before mutating.** The first step of every skill is a cheap read-only check, and each skill ships a small helper script that only prints `key: value` facts.
