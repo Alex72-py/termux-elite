@@ -1,8 +1,11 @@
 ---
 name: proot-boundaries
 description: Decide whether a failure belongs to native Termux or a proot distro and which side should own the package, interpreter, and project path. Use when something works in one environment but not the other, when Ubuntu or Debian runs under Termux, when a glibc-only binary is needed, or before installing, backing up, or resetting a proot distro. Do NOT use for ordinary native Termux package errors, and never use proot-distro reset or remove as a generic repair.
-triggers: proot,proot-distro,ubuntu in termux,native termux,glibc,works in proot,debian in termux
-risk: medium
+license: MIT
+compatibility: Termux on Android (Bionic libc, usually aarch64). Where a skill says so, also usable from a proot distro.
+metadata:
+  risk: "medium"
+  triggers: "proot,proot-distro,ubuntu in termux,native termux,glibc,works in proot,debian in termux"
 ---
 # Native Termux and proot Boundaries
 
@@ -31,6 +34,11 @@ Run `sh scripts/detect-boundary.sh`. Treat a prompt label as unreliable; use `$P
 6. Files are not shared unless bound. A project under the distro's `/root` is not under Termux `$HOME`, and the reverse needs a bind at login.
 7. There is no systemd and no real init inside proot. Service questions go to `termux-services` on the native side.
 8. Cross-boundary paths and networking must be tested, not assumed.
+
+## Example
+- Situation: A vendor CLI that needs glibc fails to start in Termux.
+- Without the skill: Installs libraries piecemeal on the native side hoping the binary finds them.
+- With the skill: Chooses a proot distro for that tool, installs its dependencies on the proot side, binds the project directory at login, and keeps `termux-*` calls on the native side.
 
 ## Safety
 Installing, resetting, or removing a distro is destructive to everything inside it. Back up first (`proot-distro backup <alias>` where the installed version supports it, or `termux-backup`), name exactly what will be lost, and get confirmation. Do not recommend `proot-distro reset` or `remove` as a generic repair.

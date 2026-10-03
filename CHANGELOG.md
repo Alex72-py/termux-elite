@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Frontmatter now follows the open Agent Skills format. `triggers` and `risk` moved under `metadata`, and every skill gains `license` and `compatibility`, so strict validators and every host that reads `SKILL.md` accept the files. `manifest.json` stays the routing source of truth and a test keeps the two in sync.
+- Every skill gains a three-line `## Example` (situation, without the skill, with the skill), checked by tests.
+- New skill `termux-adb`: pair and connect Wireless debugging from Termux to the same phone, read `unauthorized` and `offline` states, and record and roll back any adb-only setting. Read-only helper `check-adb.sh` never starts the adb server. `background-processes` now hands off to it.
+- Tests: spec-key check, hand-written and PyYAML parsers must agree, example shape.
+
 ## 0.5.0 - 2026-10-03
 
 - Discoverability: README rebuilt around a one-line `npx skills add Alex72-py/termux-elite` install, a symptom-to-skill table, a worked example, a safety summary and an FAQ. Failure-report and new-skill issue forms, a pull request template and a security policy added.

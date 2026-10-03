@@ -1,8 +1,11 @@
 ---
 name: termux-sshd
 description: Set up, harden, and debug the OpenSSH server on Termux (port 8022, key authentication, connection refused, permission denied, host key warnings). Use when the user wants to log in to the phone from a computer, or an ssh connection to Termux fails. Do NOT use for outbound ssh and git keys (see git-credentials), and never expose the server beyond a trusted network.
-triggers: termux sshd,ssh into phone,port 8022,connection refused termux,sshd not starting,authorized_keys termux,login to termux from pc
-risk: medium
+license: MIT
+compatibility: Termux on Android (Bionic libc, usually aarch64). Where a skill says so, also usable from a proot distro.
+metadata:
+  risk: "medium"
+  triggers: "termux sshd,ssh into phone,port 8022,connection refused termux,sshd not starting,authorized_keys termux,login to termux from pc"
 ---
 # Termux SSH Server
 
@@ -30,6 +33,11 @@ Run `sh scripts/check-sshd.sh` (read-only; reports file modes and config lines, 
 7. `REMOTE HOST IDENTIFICATION HAS CHANGED` after reinstalling Termux is expected; remove the old entry on the client after confirming the change is yours.
 8. For a server-side view run `sshd -D -d -p 8022` in a spare session; stop it with Ctrl-C.
 9. Sessions that drop when the screen turns off are Android suspending Termux: `background-processes`.
+
+## Example
+- Situation: ssh user@phone times out on port 22.
+- Without the skill: Tries to bind sshd to port 22 and enables password login.
+- With the skill: Explains Termux listens on 8022, logs in with the `whoami` name, installs the public key with modes 700 and 600, and disables password login only after a key login works.
 
 ## Safety
 This opens an inbound network service. Use it only on a trusted network, with key authentication, and stop it when done. Never edit `sshd_config` without a copy, never enable root-style options or empty passwords, and never print private keys or `authorized_keys` content beyond key comments the user already shared.

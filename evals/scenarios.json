@@ -113,6 +113,10 @@
       {
         "says": "there is no internet inside Termux and DNS lookups fail but the browser works",
         "skill": "termux-network"
+      },
+      {
+        "says": "adb pair asks for a pairing code and then adb connect says connection refused from Termux",
+        "skill": "termux-adb"
       }
     ],
     "paraphrased": [
@@ -171,6 +175,10 @@
       {
         "says": "everything online fails in the terminal with a trust or lookup error",
         "skill": "termux-network"
+      },
+      {
+        "says": "I want Termux to run adb commands against this same phone without plugging into a computer",
+        "skill": "termux-adb"
       }
     ],
     "heldout": [
@@ -229,6 +237,10 @@
       {
         "says": "https requests fail with certificate errors while the browser works",
         "skill": "termux-network"
+      },
+      {
+        "says": "the debugging bridge over wifi keeps saying this device is unauthorized",
+        "skill": "termux-adb"
       }
     ]
   }

@@ -1,8 +1,11 @@
 ---
 name: package-troubleshooting
 description: Diagnose pkg and apt failures on Termux (unable to locate package, stale or wrong mirrors, clock skew, hash mismatch, interrupted dpkg, libraries that fail to link after a partial upgrade) and separate them from build failures. Use when pkg or apt prints an error, when a Debian or Ubuntu package name is missing, or when a command dies with CANNOT LINK EXECUTABLE. Do NOT use to run broad upgrades, change mirrors, or clear caches before capturing the exact error, and do not use for compile errors (see python-native-build).
-triggers: pkg failed,apt failed,package not found,repository error,unable to locate package,cannot link executable,hash sum mismatch,dpkg interrupted,cannot find library,broken packages,repository problem,pkg update fails
-risk: medium
+license: MIT
+compatibility: Termux on Android (Bionic libc, usually aarch64). Where a skill says so, also usable from a proot distro.
+metadata:
+  risk: "medium"
+  triggers: "pkg failed,apt failed,package not found,repository error,unable to locate package,cannot link executable,hash sum mismatch,dpkg interrupted,cannot find library,broken packages,repository problem,pkg update fails"
 ---
 # Package Troubleshooting
 
@@ -33,6 +36,11 @@ Capture, read-only: the full error, the requested package, `dpkg --print-archite
 7. `No space left on device`: check free space; `pkg clean` removes downloaded archives only.
 8. Never copy Debian or Ubuntu `sources.list` entries into Termux. Different libc, different paths: it breaks the installation.
 9. Resolution succeeds but compilation fails: hand off.
+
+## Example
+- Situation: pkg install python3-dev prints Unable to locate package.
+- Without the skill: Pastes a Debian sources.list entry into Termux and breaks the installation.
+- With the skill: Explains that Termux headers ship inside `python`, runs `pkg search python` to confirm, and changes no repository.
 
 ## Safety
 `pkg install`, `pkg upgrade`, `pkg update`, mirror changes (`termux-change-repo`), and dpkg repair all mutate local state and can use large storage or break pinned dependencies. Run read-only status and search first, present each change separately, and get confirmation.

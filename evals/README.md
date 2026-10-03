@@ -14,9 +14,9 @@ python evals/route.py "green on my machine, red on the pipeline"
 
 | Set | What it is | Top-1 correct |
 | --- | --- | --- |
-| direct | real error strings and typical first messages | 28/28 |
-| paraphrased | plain-language wording; used to tune the triggers | 11/14 |
-| heldout | written after tuning; not tuned against | 8/14 |
+| direct | real error strings and typical first messages | 29/29 |
+| paraphrased | plain-language wording; used to tune the triggers | 12/15 |
+| heldout | written after tuning; not tuned against | 9/15 |
 
 Before the plain-language triggers were added, the paraphrased set scored 7/14: the skills matched exact error strings well but missed users describing the problem in their own words. That gap is why `manifest.json` triggers now include phrases like `works locally fails on ci` and `no internet`.
 

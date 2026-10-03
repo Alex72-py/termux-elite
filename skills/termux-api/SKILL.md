@@ -1,8 +1,11 @@
 ---
 name: termux-api
 description: Attribute a hanging, empty, or failing termux-* command to the right layer (Termux:API app, termux-api package, or an Android runtime permission) before relying on it. Use when termux-battery-status, termux-notification, termux-clipboard-get, termux-location, or similar commands hang, print nothing, or report a permission error. Do NOT use for storage links (see storage-permissions), for commands inside proot, or for ordinary shell failures.
-triggers: termux-api,termux api,termux-battery-status,termux command hangs,termux-notification,termux-clipboard-get,termux-location
-risk: low
+license: MIT
+compatibility: Termux on Android (Bionic libc, usually aarch64). Where a skill says so, also usable from a proot distro.
+metadata:
+  risk: "low"
+  triggers: "termux-api,termux api,termux-battery-status,termux command hangs,termux-notification,termux-clipboard-get,termux-location"
 ---
 # Termux:API
 
@@ -28,6 +31,11 @@ Native Termux only. Run `sh scripts/check-termux-api.sh`; it is bounded and read
 5. `termux-notification` shows nothing on recent Android: the notification permission for Termux:API may be off (Android 13 and later).
 6. `termux-clipboard-get` returns empty while the screen or another app has focus: Android restricts background clipboard reads (Android 10 and later). Retry with Termux in the foreground before blaming the package.
 7. Always call with `timeout`, for example `timeout 10 termux-battery-status`, so a missing app cannot block the agent.
+
+## Example
+- Situation: termux-battery-status hangs with no output.
+- Without the skill: Reinstalls the termux-api package repeatedly.
+- With the skill: Wraps the call in `timeout 10`, sees binaries present but the call timing out, and points at the Termux:API app being missing, stopped, or battery-restricted.
 
 ## Safety
 Many commands expose sensitive data (location, SMS, contacts, call log, clipboard). Request only the one capability the task needs, do not echo results beyond the task, and ask before any command that sends, calls, writes, or notifies.

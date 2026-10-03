@@ -1,8 +1,11 @@
 ---
 name: storage-permissions
 description: Explain why a path is unreadable or unwritable on Termux (missing storage link, revoked Android permission, scoped storage, a filesystem without Unix modes or symlinks, a proot bind that was never made) and choose where files should live. Use for Permission denied, a missing ~/storage, /sdcard access, or git and venv failures on shared storage. Do NOT use for Termux API permission errors (see termux-api) or for ordinary file mode problems under $HOME.
-triggers: storage permission,permission denied android,shared storage,sdcard,termux-setup-storage,scoped storage,downloads folder empty,save to gallery,cannot save files to phone storage
-risk: low
+license: MIT
+compatibility: Termux on Android (Bionic libc, usually aarch64). Where a skill says so, also usable from a proot distro.
+metadata:
+  risk: "low"
+  triggers: "storage permission,permission denied android,shared storage,sdcard,termux-setup-storage,scoped storage,downloads folder empty,save to gallery,cannot save files to phone storage"
 ---
 # Android Storage Permissions
 
@@ -30,6 +33,11 @@ Capture, read-only: `pwd`, `$HOME`, the failing path, and `sh scripts/check-stor
 5. Other apps' `Android/data` and `Android/obb` are blocked by scoped storage on recent Android. Do not try to work around it.
 6. Inside proot a path is visible only if it was bound at login; a Termux path is not automatically present.
 7. Prefer `$HOME` unless the task needs the file to be visible to other Android apps.
+
+## Example
+- Situation: python -m venv under /sdcard fails with a symlink or permission error.
+- Without the skill: Runs `chmod -R 777`, which has no effect on shared storage.
+- With the skill: Explains that shared storage has no Unix modes, symlinks, or executable bit, moves the repository and venv under `$HOME`, and keeps only exchange files on shared storage.
 
 ## Safety
 `termux-setup-storage` changes user-visible links and shows an Android dialog: ask first. Never create, move, or delete files in shared storage without approval, and never run `chmod` or `chown` loops against it.

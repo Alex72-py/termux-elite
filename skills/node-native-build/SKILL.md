@@ -1,8 +1,11 @@
 ---
 name: node-native-build
 description: Diagnose npm and Node installs that fail on Termux (node-gyp errors such as android_ndk_path, missing compilers, packages with no android binary, optional platform dependencies, out-of-memory builds) and pick the smallest fix, including WASM fallbacks. Use when npm install, yarn, pnpm, or node-gyp fails, or a package reports an unsupported platform android. Do NOT use for Python builds (see python-native-build) or for JavaScript logic errors.
-triggers: npm install failed,node-gyp,android_ndk_path,unsupported platform android,gyp err,cannot find module native,npm build error,javascript package compile,native addon,npm native module
-risk: medium
+license: MIT
+compatibility: Termux on Android (Bionic libc, usually aarch64). Where a skill says so, also usable from a proot distro.
+metadata:
+  risk: "medium"
+  triggers: "npm install failed,node-gyp,android_ndk_path,unsupported platform android,gyp err,cannot find module native,npm build error,javascript package compile,native addon,npm native module"
 ---
 # Node Native Build
 
@@ -31,6 +34,11 @@ Run `sh scripts/check-node-toolchain.sh`. Capture the first `gyp ERR!` or build 
 6. A build that dies with `Killed`: lower parallelism and memory pressure (see `background-processes`), and raise `NODE_OPTIONS=--max-old-space-size` only within real device RAM.
 7. `--ignore-scripts` can confirm that a postinstall step is the failing part, but it leaves the addon unbuilt; say so and do not present it as the fix.
 8. Tools that hard-code `/tmp` fail; Termux uses `$TMPDIR`.
+
+## Example
+- Situation: npm install fails with Undefined variable android_ndk_path in binding.gyp.
+- Without the skill: Fakes the platform string or moves the whole project into proot.
+- With the skill: Confirms `python`, `make`, and `clang` are present, applies the documented fix for the missing variable after confirmation, re-runs the install, and verifies with a `require`.
 
 ## Safety
 Installing packages, creating `~/.gyp/include.gypi`, and global npm installs change the environment: state the exact change and confirm. Do not run install scripts from packages the user did not choose.
