@@ -1,7 +1,7 @@
 ---
 name: package-troubleshooting
 description: Diagnose pkg and apt failures on Termux (unable to locate package, stale or wrong mirrors, clock skew, hash mismatch, interrupted dpkg, libraries that fail to link after a partial upgrade) and separate them from build failures. Use when pkg or apt prints an error, when a Debian or Ubuntu package name is missing, or when a command dies with CANNOT LINK EXECUTABLE. Do NOT use to run broad upgrades, change mirrors, or clear caches before capturing the exact error, and do not use for compile errors (see python-native-build).
-triggers: pkg failed,apt failed,package not found,repository error,unable to locate package,cannot link executable,hash sum mismatch,dpkg interrupted
+triggers: pkg failed,apt failed,package not found,repository error,unable to locate package,cannot link executable,hash sum mismatch,dpkg interrupted,cannot find library,broken packages,repository problem,pkg update fails
 risk: medium
 ---
 # Package Troubleshooting
@@ -24,6 +24,7 @@ Capture, read-only: the full error, the requested package, `dpkg --print-archite
 
 ## Decision tree
 1. Native Termux uses `pkg` (a wrapper around `apt`). A proot distro uses its own `apt`.
+1a. Many unrelated failures on an old install: read `termux_apk_release` from the `termux-environment` helper. `GOOGLE_PLAY_STORE` is the deprecated Play build, which is no longer updated, so packages and repositories may be stale; the supported sources are F-Droid and the GitHub release. Builds from different sources are signed differently and generally cannot be installed over one another, so switching means `termux-backup`, uninstall, reinstall, restore: destructive, so it needs explicit confirmation. Source: the Termux README, checked 2026-10.
 2. `Release file ... is not valid yet` or TLS date errors: the device clock is wrong. Fix the date (automatic time in Android settings) before touching repositories.
 3. `Unable to locate package`: stale indexes, a Debian-style name, or an absent package. Termux package names differ from Debian. Examples: `python3-dev` has no equivalent (headers ship with `python`); `libssl-dev` is `openssl`; `build-essential` is `clang make`; `libffi-dev` is `libffi`. Search with `pkg search <word>` before concluding it is absent.
 4. `Hash Sum mismatch` or a 404 or timeout from a mirror: the mirror is out of sync or down. Retry once, then consider a different mirror (a confirmed, separate action).

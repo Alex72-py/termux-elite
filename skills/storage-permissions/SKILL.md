@@ -1,7 +1,7 @@
 ---
 name: storage-permissions
 description: Explain why a path is unreadable or unwritable on Termux (missing storage link, revoked Android permission, scoped storage, a filesystem without Unix modes or symlinks, a proot bind that was never made) and choose where files should live. Use for Permission denied, a missing ~/storage, /sdcard access, or git and venv failures on shared storage. Do NOT use for Termux API permission errors (see termux-api) or for ordinary file mode problems under $HOME.
-triggers: storage permission,permission denied android,shared storage,sdcard,termux-setup-storage,scoped storage
+triggers: storage permission,permission denied android,shared storage,sdcard,termux-setup-storage,scoped storage,downloads folder empty,save to gallery,cannot save files to phone storage
 risk: low
 ---
 # Android Storage Permissions
