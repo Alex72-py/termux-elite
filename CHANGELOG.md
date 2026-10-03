@@ -1,10 +1,13 @@
 # Changelog
 
-## Unreleased
+## 0.5.0 - 2026-10-03
 
-- README rebuilt around discovery: a one-line `npx skills add Alex72-py/termux-elite` install, a worked example, a symptom-to-skill table, a safety summary, FAQ, and a call for real-world failure reports.
-- Issue forms for failure reports and new-skill proposals, a pull request template, and a security policy.
-- Tests that keep the README, issue forms, and community files consistent with the skills.
+- Discoverability: README rebuilt around a one-line `npx skills add Alex72-py/termux-elite` install, a symptom-to-skill table, a worked example, a safety summary and an FAQ. Failure-report and new-skill issue forms, a pull request template and a security policy added.
+- `scripts/doctor.sh`: one read-only command that runs every skill helper and prints a single report (`--list`, `--skill NAME`).
+- Accuracy, checked against Termux and Android sources: the phantom-process note now says the 32-process cap is system-wide and that the Android 14 toggle resets when Developer options is turned off; `node-native-build` documents the `GYP_DEFINES` alternative and the cause of the `android_ndk_path` error; `package-troubleshooting` checks the install source, because the Google Play build of Termux is deprecated, and the environment helper now prints `termux_apk_release`.
+- Fix: the Node helper no longer writes npm logs and cache under `$HOME`. Every helper now has a test that it leaves `$HOME` untouched.
+- Routing: plain-language triggers added to seven skills. `evals/` adds scenario sets, `route.py` and a regression test. Measured with a lexical proxy: 28/28 on direct error strings, 11/14 on paraphrased phrasing (7/14 before the new triggers) and 8/14 on held-out phrasing. Agent-behaviour results are not measured yet; the protocol is in `evals/README.md`.
+- Tests for the README, issue forms and community files: README links and skill count, issue-form YAML, changelog head.
 
 ## 0.4.0 - 2026-10-02
 
