@@ -48,12 +48,31 @@ The skill is a procedure, not a command to run blindly. See [examples/](examples
 
 Agents do not need this table: each skill's `description` lists the same symptoms, and [`AGENTS.md`](AGENTS.md) and [`manifest.json`](manifest.json) carry a routing index with a risk level per skill.
 
+## Quick triage
+
+Not sure where to start? One read-only command runs every helper and prints a single report, environment first:
+
+```sh
+sh scripts/doctor.sh                          # everything
+sh scripts/doctor.sh --skill termux-network   # one skill's helpers
+sh scripts/doctor.sh --list                   # what it would run
+```
+
+Paste the output to your agent, or let it run the command itself. Nothing is modified.
+
 ## Safe by design
 
 - **Inspect before mutating.** The first step of every skill is a cheap read-only check, and each skill ships a small helper script that only prints `key: value` facts.
 - **Mutations are confirmed.** Package installs, permission changes, config edits, and service changes are named explicitly and need confirmation. Medium-risk skills include a rollback.
 - **No secrets.** Helpers redact credentials in URLs, never dump the environment, and the tests scan for committed tokens and keys.
 - **Verified.** CI runs the test suite on Python 3.9 and 3.12, runs shellcheck on every script, and fails when generated host files drift from `manifest.json`.
+
+## What has been verified
+
+- **Helpers.** All 13 helper scripts run in CI, are checked to be read-only, and exit cleanly off-device.
+- **Facts.** The phantom-process limit, the `android_ndk_path` workaround, and the install-source variable were checked against Termux project sources on 2026-10-03. The guidance reflects them, including that the Google Play build of Termux is deprecated.
+- **Routing.** In [evals/](evals/README.md), 28 of 28 scenarios written with error text and 12 of 14 plain-language paraphrases route to the expected skill by a lexical check. Real hosts match semantically, so treat that as a floor.
+- **Not yet measured.** There is no on-device or live-agent benchmark yet. `evals/README.md` explains how to score one, and results are welcome.
 
 ## Install
 
@@ -113,6 +132,8 @@ skills/<name>/scripts/         small read-only helpers that print key: value fac
 manifest.json                  discovery index (name, triggers, capabilities, risk, related, scripts)
 AGENTS.md                      generated routing index and rules, for hosts that load context files
 scripts/install.sh             installer for hosts that read skill directories
+scripts/doctor.sh              one read-only report from every helper
+evals/                         scenarios and a routing check
 scripts/sync_hosts.py          generates host manifests and AGENTS.md from manifest.json
 adapters/<host>/               notes for each host
 docs/SKILL_TEMPLATE.md         starting point for a new skill

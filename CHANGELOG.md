@@ -1,10 +1,15 @@
 # Changelog
 
-## Unreleased
+## 0.5.0 - 2026-10-03
 
 - README rebuilt around discovery: a one-line `npx skills add Alex72-py/termux-elite` install, a worked example, a symptom-to-skill table, a safety summary, FAQ, and a call for real-world failure reports.
 - Issue forms for failure reports and new-skill proposals, a pull request template, and a security policy.
 - Tests that keep the README, issue forms, and community files consistent with the skills.
+- `scripts/doctor.sh`: one read-only report from every helper, environment first, with `--skill` and `--list`.
+- `evals/`: 42 realistic scenarios (28 with error text, 14 plain-language) with a scoring rubric, plus a lexical routing check that tests keep from regressing.
+- Plain-language triggers for seven skills; routing of plain-language requests in the eval set went from 7 of 14 to 12 of 14.
+- Guidance checked against Termux project sources: the phantom-process limit is counted across all apps and the Android 14 toggle resets when Developer options is turned off; `package-troubleshooting` now checks the install source (the Google Play build is deprecated); `node-native-build` explains the cause of the `android_ndk_path` error and the `GYP_DEFINES` equivalent.
+- `termux-environment` helper reports `termux_apk_release`.
 
 ## 0.4.0 - 2026-10-02
 
