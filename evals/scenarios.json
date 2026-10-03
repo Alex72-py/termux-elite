@@ -1,0 +1,235 @@
+{
+  "description": "Symptom scenarios used by evals/route.py and tests/test_evals.py. \"direct\" uses real error strings; \"paraphrased\" is plain-language wording that was used to tune triggers; \"heldout\" was written afterwards and not tuned against.",
+  "sets": {
+    "direct": [
+      {
+        "says": "Which architecture is my phone and am I in proot or native Termux? I need to know before I install anything.",
+        "skill": "termux-environment"
+      },
+      {
+        "says": "What Android and Termux version is this device running, and which toolchains are already installed?",
+        "skill": "termux-environment"
+      },
+      {
+        "says": "pip install cryptography fails with error: failed building wheel for cryptography, and it cannot find a Rust compiler",
+        "skill": "python-native-build"
+      },
+      {
+        "says": "ERROR: externally-managed-environment when I run pip install requests inside Termux",
+        "skill": "python-native-build"
+      },
+      {
+        "says": "pkg install python3-dev says E: Unable to locate package python3-dev",
+        "skill": "package-troubleshooting"
+      },
+      {
+        "says": "after pkg upgrade a command dies with CANNOT LINK EXECUTABLE and says library libssl.so.3 not found",
+        "skill": "package-troubleshooting"
+      },
+      {
+        "says": "ls /sdcard says Permission denied even though I already ran termux-setup-storage",
+        "skill": "storage-permissions"
+      },
+      {
+        "says": "my script can no longer write into the shared storage Download folder on Android",
+        "skill": "storage-permissions"
+      },
+      {
+        "says": "should I install this inside proot-distro ubuntu or in native Termux? the glibc binary will not run",
+        "skill": "proot-boundaries"
+      },
+      {
+        "says": "I installed the package in my proot ubuntu but native Termux cannot find it",
+        "skill": "proot-boundaries"
+      },
+      {
+        "says": "my workflow failed on CI but it passes locally, can you look at the run",
+        "skill": "github-actions"
+      },
+      {
+        "says": "gh run view shows the check failed at the test step, how do I read the log without guessing",
+        "skill": "github-actions"
+      },
+      {
+        "says": "termux-battery-status just hangs and prints nothing",
+        "skill": "termux-api"
+      },
+      {
+        "says": "termux-notification does nothing, is the Termux:API app even installed",
+        "skill": "termux-api"
+      },
+      {
+        "says": "my build gets killed with Process completed (signal 9) whenever I lock the screen",
+        "skill": "background-processes"
+      },
+      {
+        "says": "the node server shows exit code 137 after a few minutes in the background",
+        "skill": "background-processes"
+      },
+      {
+        "says": "git push says Permission denied (publickey) from Termux",
+        "skill": "git-credentials"
+      },
+      {
+        "says": "remote: password authentication was removed, git authentication failed for my https remote",
+        "skill": "git-credentials"
+      },
+      {
+        "says": "npm install fails with gyp ERR! Undefined variable android_ndk_path in binding.gyp",
+        "skill": "node-native-build"
+      },
+      {
+        "says": "npm ERR! unsupported platform android for this native module",
+        "skill": "node-native-build"
+      },
+      {
+        "says": "I want my python server to restart if it crashes and to start when the phone boots",
+        "skill": "termux-services"
+      },
+      {
+        "says": "how do I use sv-enable to autostart a service in Termux",
+        "skill": "termux-services"
+      },
+      {
+        "says": "I want to ssh into my phone from my laptop but connection refused on port 8022",
+        "skill": "termux-sshd"
+      },
+      {
+        "says": "sshd will not start in Termux and my authorized_keys file is ignored",
+        "skill": "termux-sshd"
+      },
+      {
+        "says": "I am migrating to a new phone, how do I back up Termux home and prefix and restore it later",
+        "skill": "termux-backup"
+      },
+      {
+        "says": "make a restorable snapshot of my Termux before I upgrade everything",
+        "skill": "termux-backup"
+      },
+      {
+        "says": "curl: (60) SSL certificate problem: certificate verify failed in Termux",
+        "skill": "termux-network"
+      },
+      {
+        "says": "there is no internet inside Termux and DNS lookups fail but the browser works",
+        "skill": "termux-network"
+      }
+    ],
+    "paraphrased": [
+      {
+        "says": "before I do anything, tell me what kind of phone shell I am even in",
+        "skill": "termux-environment"
+      },
+      {
+        "says": "installing numpy-like packages blows up with a wall of clang errors and some Rust thing",
+        "skill": "python-native-build"
+      },
+      {
+        "says": "apt keeps complaining that it cannot find libraries I just installed, what is wrong with my repos",
+        "skill": "package-troubleshooting"
+      },
+      {
+        "says": "my downloads folder is empty from the terminal and I cannot save files where my gallery can see them",
+        "skill": "storage-permissions"
+      },
+      {
+        "says": "I put my Debian tools in the chroot-like thing, but the normal shell does not see them",
+        "skill": "proot-boundaries"
+      },
+      {
+        "says": "green on my machine, red on the pipeline, find out why",
+        "skill": "github-actions"
+      },
+      {
+        "says": "the phone vibrate and clipboard commands freeze forever",
+        "skill": "termux-api"
+      },
+      {
+        "says": "my long download just dies by itself when I switch to another app",
+        "skill": "background-processes"
+      },
+      {
+        "says": "I cannot upload my commits, it keeps asking who I am and then rejects me",
+        "skill": "git-credentials"
+      },
+      {
+        "says": "installing a javascript package that compiles C code fails on my phone",
+        "skill": "node-native-build"
+      },
+      {
+        "says": "keep my bot alive forever, even after reboot or if it crashes",
+        "skill": "termux-services"
+      },
+      {
+        "says": "I want to control my phone from my laptop terminal over wifi",
+        "skill": "termux-sshd"
+      },
+      {
+        "says": "I do not want to lose my setup when I reset my phone",
+        "skill": "termux-backup"
+      },
+      {
+        "says": "everything online fails in the terminal with a trust or lookup error",
+        "skill": "termux-network"
+      }
+    ],
+    "heldout": [
+      {
+        "says": "what hardware and OS am I running on here, and is this the real Termux or something emulated",
+        "skill": "termux-environment"
+      },
+      {
+        "says": "installing this python library keeps failing while compiling C extensions on my android phone",
+        "skill": "python-native-build"
+      },
+      {
+        "says": "pkg refuses to install anything and complains about broken or held packages",
+        "skill": "package-troubleshooting"
+      },
+      {
+        "says": "my app cannot read the photos folder from the terminal, access denied",
+        "skill": "storage-permissions"
+      },
+      {
+        "says": "I am in an Ubuntu environment on the phone, which of my installed things live where",
+        "skill": "proot-boundaries"
+      },
+      {
+        "says": "the automated checks on my pull request keep failing and I cannot tell which step",
+        "skill": "github-actions"
+      },
+      {
+        "says": "the camera and sensor commands hang with no output at all",
+        "skill": "termux-api"
+      },
+      {
+        "says": "the training script silently stops whenever the phone sleeps",
+        "skill": "background-processes"
+      },
+      {
+        "says": "github does not accept my login when I try to push from the phone",
+        "skill": "git-credentials"
+      },
+      {
+        "says": "an npm dependency with native bindings will not compile here",
+        "skill": "node-native-build"
+      },
+      {
+        "says": "how do I make my script start automatically and restart when it crashes",
+        "skill": "termux-services"
+      },
+      {
+        "says": "I would like to log in to this phone remotely using ssh keys",
+        "skill": "termux-sshd"
+      },
+      {
+        "says": "how can I save everything before wiping the device and restore it later",
+        "skill": "termux-backup"
+      },
+      {
+        "says": "https requests fail with certificate errors while the browser works",
+        "skill": "termux-network"
+      }
+    ]
+  }
+}

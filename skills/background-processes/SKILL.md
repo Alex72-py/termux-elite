@@ -24,7 +24,7 @@ Capture, read-only: exit status or last log lines, how long it ran, whether the 
 2. Dies soon after the screen turns off: the CPU was suspended. `termux-wake-lock` (or the wake lock action in the Termux notification) prevents it at a battery cost.
 3. Dies after Termux is swiped away or in the background: check battery optimization for Termux. Vendor task killers add their own limits (Xiaomi, Huawei, Samsung and others; see dontkillmyapp.com). These are user-level settings; guide the user, do not act.
 4. Dies mid-build with `Killed`: out of memory. Lower parallelism first (`make -jN`, `MAKEFLAGS`, `CMAKE_BUILD_PARALLEL_LEVEL`) using the suggested job count.
-5. `signal 9` while many child processes run on Android 12 or later: suspect the phantom process limit (a cap on background child processes, 32 by default). Reduce parallelism first. Newer releases expose a developer option to disable child process restrictions; older ones need an `adb` setting change. The `adb` change is system-wide and a last resort.
+5. `signal 9` while many child processes run on Android 12 or later: suspect the phantom process limit (a cap of 32 background child processes counted across all apps combined; Android also kills background processes that use excessive CPU). Reduce parallelism first. Android 14 and later expose a developer option, Disable child process restrictions, which switches itself off again if Developer options is turned off; Android 12L and 13 need an `adb` or root setting change. The `adb` change is system-wide and a last resort.
 6. `tmux`, `screen`, and `nohup` survive a closed terminal session, not Android killing the Termux app.
 
 ## Safety

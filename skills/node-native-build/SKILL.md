@@ -1,7 +1,7 @@
 ---
 name: node-native-build
 description: Diagnose npm and Node installs that fail on Termux (node-gyp errors such as android_ndk_path, missing compilers, packages with no android binary, optional platform dependencies, out-of-memory builds) and pick the smallest fix, including WASM fallbacks. Use when npm install, yarn, pnpm, or node-gyp fails, or a package reports an unsupported platform android. Do NOT use for Python builds (see python-native-build) or for JavaScript logic errors.
-triggers: npm install failed,node-gyp,android_ndk_path,unsupported platform android,gyp err,cannot find module native,npm build error
+triggers: npm install failed,node-gyp,android_ndk_path,unsupported platform android,gyp err,cannot find module native,npm build error,javascript package compile,native addon,npm native module
 risk: medium
 ---
 # Node Native Build
@@ -24,7 +24,7 @@ Run `sh scripts/check-node-toolchain.sh`. Capture the first `gyp ERR!` or build 
 
 ## Decision tree
 1. The platform string is `android`, not `linux`. Packages that choose binaries by `os` and `cpu` may have no matching optional dependency.
-2. `Undefined variable android_ndk_path in binding.gyp`: node-gyp needs the variable defined. The common fix is a user include file at `~/.gyp/include.gypi` containing `{'variables': {'android_ndk_path': ''}}`. Creating it is a confirmed change.
+2. `Undefined variable android_ndk_path in binding.gyp`: node-gyp needs the variable defined. The common fix is a user include file at `~/.gyp/include.gypi` containing `{'variables': {'android_ndk_path': ''}}`. Creating it is a confirmed change. A per-shell alternative is `export GYP_DEFINES="android_ndk_path=''"`. Cause: Termux's Node reports its OS as android, so node-gyp enables NDK-only branches; upstream node-gyp is addressing it, so a newer node-gyp may not need the workaround.
 3. Missing compiler: node-gyp needs `python`, `make`, and `clang` (and `pkg-config` for some addons) from Termux packages.
 4. `No module named 'distutils'` on newer Python: use a node-gyp version that no longer needs it instead of patching Python.
 5. No Android binary exists for a package: prefer its WASM build when one exists (for example the `-wasm` variants some bundlers and image tools publish), a Termux-packaged equivalent, or proot with glibc. Do not fake the platform.

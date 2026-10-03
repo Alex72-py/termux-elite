@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "name": "termux-elite",
   "description": "Portable operational skills for agents working inside Termux and Android environments.",
   "skills": [
@@ -75,7 +75,11 @@
         "unable to locate package",
         "cannot link executable",
         "hash sum mismatch",
-        "dpkg interrupted"
+        "dpkg interrupted",
+        "cannot find library",
+        "broken packages",
+        "repository problem",
+        "pkg update fails"
       ],
       "required_capabilities": [
         "shell",
@@ -104,7 +108,10 @@
         "shared storage",
         "sdcard",
         "termux-setup-storage",
-        "scoped storage"
+        "scoped storage",
+        "downloads folder empty",
+        "save to gallery",
+        "cannot save files to phone storage"
       ],
       "required_capabilities": [
         "shell",
@@ -162,7 +169,10 @@
         "ci failed",
         "passes locally fails on ci",
         "gh run",
-        "check failed"
+        "check failed",
+        "works locally fails on ci",
+        "pipeline red",
+        "ci failing"
       ],
       "required_capabilities": [
         "git",
@@ -250,7 +260,10 @@
         "ssh key",
         "http 403",
         "credential prompt",
-        "host key verification failed"
+        "host key verification failed",
+        "cannot push commits",
+        "keeps asking for password",
+        "github rejects me"
       ],
       "required_capabilities": [
         "shell",
@@ -279,7 +292,10 @@
         "unsupported platform android",
         "gyp err",
         "cannot find module native",
-        "npm build error"
+        "npm build error",
+        "javascript package compile",
+        "native addon",
+        "npm native module"
       ],
       "required_capabilities": [
         "shell",
@@ -367,7 +383,11 @@
         "migrate termux",
         "snapshot termux",
         "before upgrade backup",
-        "termux tar backup"
+        "termux tar backup",
+        "reset phone",
+        "migrate phone",
+        "restore setup",
+        "save my setup"
       ],
       "required_capabilities": [
         "shell",
@@ -396,7 +416,11 @@
         "ifconfig empty",
         "cannot bind port",
         "curl failed termux",
-        "certificate not yet valid"
+        "certificate not yet valid",
+        "no internet",
+        "dns lookup fails",
+        "certificate error",
+        "trust error"
       ],
       "required_capabilities": [
         "shell",
