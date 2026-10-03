@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- README rebuilt around discovery: a one-line `npx skills add Alex72-py/termux-elite` install, a worked example, a symptom-to-skill table, a safety summary, FAQ, and a call for real-world failure reports.
+- Issue forms for failure reports and new-skill proposals, a pull request template, and a security policy.
+- Tests that keep the README, issue forms, and community files consistent with the skills.
+
 ## 0.4.0 - 2026-10-02
 
 - Host support: Claude Code (plugin and marketplace), Antigravity CLI (`plugin.json`), Gemini CLI (extension manifest and `skills install`), OpenCode, Codex, Cursor, Kiro, and any host that reads `AGENTS.md` or skill directories.
