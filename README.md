@@ -1,33 +1,73 @@
 # termux-elite
 
-![ci](https://github.com/Alex72-py/termux-elite/actions/workflows/ci.yml/badge.svg)
+[![ci](https://github.com/Alex72-py/termux-elite/actions/workflows/ci.yml/badge.svg)](https://github.com/Alex72-py/termux-elite/actions/workflows/ci.yml)
+[![license: MIT](https://img.shields.io/github/license/Alex72-py/termux-elite)](LICENSE)
+![skills: 14](https://img.shields.io/badge/skills-14-blue)
 
-Operational skills for AI coding agents working inside Termux and Android. Each skill is a short, verified procedure: what to inspect first, which layer is failing, what is safe to change, how to confirm the fix, and what to hand off.
+**Termux is not a normal Linux box, and your AI agent keeps forgetting that.** `termux-elite` gives coding agents 14 short, tested playbooks for the things that actually break on a phone: glibc wheels that will not import, `node-gyp` looking for an NDK, processes Android kills with signal 9, `/sdcard` permissions, proot versus native, and more.
 
-This repository is a knowledge and procedure layer, not a shell or framework. The agent still owns confirmation and execution.
+Each skill tells the agent what to inspect first, which layer is failing, what is safe to change, how to prove the fix worked, and when to hand off to a neighbouring skill.
 
-## Skills
+```sh
+npx skills add Alex72-py/termux-elite
+```
 
-| Skill | What it decides | Risk |
-| --- | --- | --- |
-| `termux-environment` | Take a small read-only snapshot of a Termux or Android shell (native or proot, Android and Termux version, CPU architecture, installed toolchains, free storage and memory) before choosing a package manager, path, or fix. | low |
-| `python-native-build` | Diagnose a failed Python install on Termux or Android (compiler or header errors, Rust or maturin builds, no wheel for this platform, glibc wheels that fail at import, externally-managed-environment) and pick the smallest fix, preferring Termux-packaged libraries over source builds. | medium |
-| `package-troubleshooting` | Diagnose pkg and apt failures on Termux (unable to locate package, stale or wrong mirrors, clock skew, hash mismatch, interrupted dpkg, libraries that fail to link after a partial upgrade) and separate them from build failures. | medium |
-| `storage-permissions` | Explain why a path is unreadable or unwritable on Termux (missing storage link, revoked Android permission, scoped storage, a filesystem without Unix modes or symlinks, a proot bind that was never made) and choose where files should live. | low |
-| `proot-boundaries` | Decide whether a failure belongs to native Termux or a proot distro and which side should own the package, interpreter, and project path. | medium |
-| `github-actions` | Investigate a failed GitHub Actions run from Termux without exposing credentials or guessing at the workflow. | low |
-| `termux-api` | Attribute a hanging, empty, or failing termux-* command to the right layer (Termux:API app, termux-api package, or an Android runtime permission) before relying on it. | low |
-| `background-processes` | Decide whether a long-running Termux process exited, was suspended, or was killed by Android, and apply the smallest mitigation (lower parallelism, wake lock, battery settings, tmux, or the phantom process limit as a last resort). | medium |
-| `git-credentials` | Diagnose git clone, fetch, and push authentication failures from Termux without exposing tokens or private keys (HTTPS tokens, SSH keys, host key prompts, wrong account, missing scopes). | medium |
-| `node-native-build` | Diagnose npm and Node installs that fail on Termux (node-gyp errors such as android_ndk_path, missing compilers, packages with no android binary, optional platform dependencies, out-of-memory builds) and pick the smallest fix, including WASM fallbacks. | medium |
-| `termux-services` | Choose how to keep a program running on Termux (tmux or nohup, Termux:Boot, or termux-services with runit) and set it up with supervision and logs. | medium |
-| `termux-sshd` | Set up, harden, and debug the OpenSSH server on Termux (port 8022, key authentication, connection refused, permission denied, host key warnings). | medium |
-| `termux-backup` | Create and verify a restorable snapshot of Termux home and prefix before risky changes, and restore it safely. | medium |
-| `termux-network` | Diagnose network problems inside Termux (DNS, TLS certificate errors, clock skew, proxies, binding ports, reaching a Termux server from the phone or LAN) given Android's restrictions on interfaces and low ports. | low |
+Works with Claude Code, Codex, Gemini CLI, Cursor, OpenCode, Antigravity and the other agents the [skills CLI](https://skills.sh) supports. Host-specific options are [below](#install).
 
-Every skill follows one standard (see [CONTRIBUTING.md](CONTRIBUTING.md)): a description written to trigger on real symptoms, a decision tree that starts with the cheapest read-only check, explicit safety and rollback, a verification command, handoffs to sibling skills, and a short report contract.
+## What changes for your agent
+
+Without a playbook, an agent that sees `pip install cryptography` fail on a phone tends to retry, reach for `sudo`, or install a toolchain it did not need. With `python-native-build` loaded it is guided to:
+
+1. Establish native Termux versus proot.
+2. Capture Python version, pip location, architecture, and the first real compiler error.
+3. Check whether a compatible wheel or a Termux-packaged library exists before building anything.
+4. Explain and confirm any package or toolchain change.
+5. Re-run the install and import a minimal module.
+6. Report what changed and what is still unsupported on Android.
+
+The skill is a procedure, not a command to run blindly. See [examples/](examples/python-install-failure.md).
+
+## Find the skill by symptom
+
+| If you see... | Skill |
+| --- | --- |
+| `pip install` fails: `failed building wheel`, `externally-managed-environment`, no wheel for this platform | [`python-native-build`](skills/python-native-build/SKILL.md) |
+| `npm install` fails with `node-gyp`, `android_ndk_path`, or `unsupported platform android` | [`node-native-build`](skills/node-native-build/SKILL.md) |
+| `pkg` or `apt`: `unable to locate package`, hash mismatch, `cannot link executable` | [`package-troubleshooting`](skills/package-troubleshooting/SKILL.md) |
+| A process disappears: `signal 9`, exit code `137`, build dies when the screen locks | [`background-processes`](skills/background-processes/SKILL.md) |
+| A server must survive crashes, reboots, or a closed terminal | [`termux-services`](skills/termux-services/SKILL.md) |
+| `Permission denied` on `/sdcard` or shared storage | [`storage-permissions`](skills/storage-permissions/SKILL.md) |
+| `termux-battery-status` and other `termux-*` commands hang or print nothing | [`termux-api`](skills/termux-api/SKILL.md) |
+| `curl`, `pip`, or `git` cannot connect; `certificate verify failed`; cannot bind a port | [`termux-network`](skills/termux-network/SKILL.md) |
+| `git push`: `Permission denied (publickey)`, HTTP 403, authentication failed | [`git-credentials`](skills/git-credentials/SKILL.md) |
+| Passes locally, fails on GitHub Actions | [`github-actions`](skills/github-actions/SKILL.md) |
+| Unsure whether to use native Termux or proot, or a glibc binary will not run | [`proot-boundaries`](skills/proot-boundaries/SKILL.md) |
+| You want to SSH into the phone (port 8022) and get `connection refused` | [`termux-sshd`](skills/termux-sshd/SKILL.md) |
+| You are about to upgrade or migrate and want a restore point | [`termux-backup`](skills/termux-backup/SKILL.md) |
+| What device, architecture, and toolchain is this, anyway? | [`termux-environment`](skills/termux-environment/SKILL.md) |
+
+Agents do not need this table: each skill's `description` lists the same symptoms, and [`AGENTS.md`](AGENTS.md) and [`manifest.json`](manifest.json) carry a routing index with a risk level per skill.
+
+## Safe by design
+
+- **Inspect before mutating.** The first step of every skill is a cheap read-only check, and each skill ships a small helper script that only prints `key: value` facts.
+- **Mutations are confirmed.** Package installs, permission changes, config edits, and service changes are named explicitly and need confirmation. Medium-risk skills include a rollback.
+- **No secrets.** Helpers redact credentials in URLs, never dump the environment, and the tests scan for committed tokens and keys.
+- **Verified.** CI runs the test suite on Python 3.9 and 3.12, runs shellcheck on every script, and fails when generated host files drift from `manifest.json`.
 
 ## Install
+
+The one-liner above installs every skill. Variations:
+
+```sh
+npx skills add Alex72-py/termux-elite --list                          # see what is inside
+npx skills add Alex72-py/termux-elite --skill python-native-build     # just one
+npx skills add Alex72-py/termux-elite -g                              # all projects, not just this one
+```
+
+Inside Termux itself, `npx` needs Node: `pkg install nodejs`.
+
+Native installs for each host:
 
 | Host | Install |
 | --- | --- |
@@ -39,7 +79,7 @@ Every skill follows one standard (see [CONTRIBUTING.md](CONTRIBUTING.md)): a des
 | Cursor | `/add-plugin Alex72-py/termux-elite` |
 | Kiro and others | `sh scripts/install.sh kiro` or `sh scripts/install.sh agents` |
 
-From a clone, the installer works on any host that reads skill directories, including inside Termux itself:
+No Node needed from a clone. The installer works on any host that reads skill directories, including inside Termux:
 
 ```sh
 git clone https://github.com/Alex72-py/termux-elite.git
@@ -49,37 +89,45 @@ sh scripts/install.sh claude              # install (managed copy)
 sh scripts/install.sh claude --uninstall  # remove only what it installed
 ```
 
-The installer copies by default (use `--link` to symlink), supports `--project` and `--skill NAME`, and never overwrites or removes a skill it did not install. Per-host details, discovery paths, and caveats are in [adapters/](adapters/).
+It copies by default (`--link` symlinks), supports `--project` and `--skill NAME`, and never overwrites or removes a skill it did not install. Per-host paths and caveats are in [adapters/](adapters/).
 
-## Layout
+## FAQ
+
+**Is this a shell or a framework?** No. It is a knowledge and procedure layer. The agent still owns confirmation and execution.
+
+**Does it run commands on my phone?** Only the agent does, through its normal tool permissions. The bundled helper scripts are read-only and print facts.
+
+**Will it work on a normal Linux machine?** It is written for Termux, Android, and proot, and says so when a fact is Android-specific. A few skills (`github-actions`, `git-credentials`) are useful anywhere, but the focus is the phone.
+
+**Can I route from my own agent?** Yes. Anything that can read files can route from `manifest.json`. See [adapters/generic](adapters/generic/README.md).
+
+## Help it cover more failures
+
+The most useful contribution is a real failure that no skill handled, or one where a skill gave the wrong advice. Open a **failure report** issue with your Android and Termux versions and the first error line (redact secrets). If the failure is a repeatable decision, it may become a new skill: see [CONTRIBUTING.md](CONTRIBUTING.md) for the quality bar and [docs/SKILL_TEMPLATE.md](docs/SKILL_TEMPLATE.md) to start one.
+
+## Repository layout
 
 ```text
-manifest.json                  discovery index (name, triggers, capabilities, risk, related, scripts)
 skills/<name>/SKILL.md         the procedure (Agent Skills layout: name + description frontmatter)
 skills/<name>/scripts/         small read-only helpers that print key: value facts
+manifest.json                  discovery index (name, triggers, capabilities, risk, related, scripts)
 AGENTS.md                      generated routing index and rules, for hosts that load context files
 scripts/install.sh             installer for hosts that read skill directories
 scripts/sync_hosts.py          generates host manifests and AGENTS.md from manifest.json
-.claude-plugin/ plugin.json gemini-extension.json .codex-plugin/ .cursor-plugin/ .agents/plugins/
-                               generated host manifests (do not edit by hand)
 adapters/<host>/               notes for each host
 docs/SKILL_TEMPLATE.md         starting point for a new skill
 tests/                         manifest, frontmatter, section, handoff, script, host and installer checks
 ```
 
-## Use it from your own agent
+The plugin manifests (`.claude-plugin/`, `.codex-plugin/`, `.cursor-plugin/`, `.agents/plugins/`, `plugin.json`, `gemini-extension.json`) are generated; do not edit them by hand.
 
-Any agent that can read files can route from `manifest.json`. See [adapters/generic](adapters/generic/README.md) for a short example.
-
-## Verify the repository
+## Develop
 
 ```sh
 python -m pip install pytest pyyaml
 python scripts/sync_hosts.py --check
 python -m pytest -q
 ```
-
-The tests check that every skill is consistent with its manifest entry, that descriptions are discoverable and valid YAML, that handoffs point at real skills, that helper scripts are executable, read-only, and agree with `SKILL.md`, that generated host files are current, that the installer behaves safely for every host, and that no secrets are committed.
 
 ## Design rules
 
@@ -89,3 +137,5 @@ The tests check that every skill is consistent with its manifest entry, that des
 4. Never print secrets or broad environment dumps.
 5. Verify the original failure after a change and record how to roll back.
 6. Mark version-specific claims; keep helper scripts auditable and dependency-light.
+
+[MIT](LICENSE)

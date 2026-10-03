@@ -1,0 +1,45 @@
+name: Failure report
+description: A Termux failure no skill handled, or a skill that gave wrong advice
+title: "[failure] "
+labels: ["failure-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Real failures from real devices are the most useful thing you can send. Redact tokens, keys, and anything private before pasting.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What happened?
+      options:
+        - No skill covered this failure
+        - A skill gave wrong or unsafe advice
+        - A skill did not trigger when it should have
+        - A helper script failed or printed something it should not
+    validations:
+      required: true
+  - type: input
+    id: skill
+    attributes:
+      label: Skill involved
+      description: The skill name, if one was involved.
+      placeholder: python-native-build
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Android version, Termux version and where you installed it from (F-Droid, GitHub, Play), CPU architecture, native Termux or proot, and which agent and host you use.
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: The first error
+      description: The first error line or two, not the whole log.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect, and what fixed it (if anything)?
