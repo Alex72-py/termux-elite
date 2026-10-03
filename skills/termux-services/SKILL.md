@@ -1,8 +1,11 @@
 ---
 name: termux-services
 description: Choose how to keep a program running on Termux (tmux or nohup, Termux:Boot, or termux-services with runit) and set it up with supervision and logs. Use when a server must restart after a crash, start at boot or app launch, or survive closing the terminal. Do NOT use when the process is being killed by Android (see background-processes first) or for one-off foreground commands.
-triggers: termux-services,termux boot,run on boot,autostart,restart on crash,sv-enable,runit,keep server running
-risk: medium
+license: MIT
+compatibility: Termux on Android (Bionic libc, usually aarch64). Where a skill says so, also usable from a proot distro.
+metadata:
+  risk: "medium"
+  triggers: "termux-services,termux boot,run on boot,autostart,restart on crash,sv-enable,runit,keep server running"
 ---
 # Termux Services
 
@@ -34,6 +37,11 @@ Run `sh scripts/check-services.sh` (read-only). Know the exact command, working 
    Never daemonize or background inside `run`; the supervisor expects the process to stay in the foreground.
 5. Combine mechanisms deliberately: Termux:Boot can start the service daemon; `termux-services` supervises the program.
 6. Boot-time behavior depends on battery optimization for both apps and on the vendor. Verify by rebooting, not by reasoning.
+
+## Example
+- Situation: A Node server must survive closing Termux and restart after a crash.
+- Without the skill: Starts it with `nohup node server.js &`, which never restarts and loses logs.
+- With the skill: Picks `termux-services`, writes a `run` script that runs the server in the foreground with `exec 2>&1`, restarts the session, and proves it with `sv status` and a kill-and-restart test.
 
 ## Safety
 Enabling a service or boot script starts code unattended and can drain battery or open a network port. State what will run, with which arguments, on which port, and confirm. Never put secrets in a `run` script; read them from a file with restricted mode.

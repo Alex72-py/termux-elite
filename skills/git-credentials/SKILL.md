@@ -1,8 +1,11 @@
 ---
 name: git-credentials
 description: Diagnose git clone, fetch, and push authentication failures from Termux without exposing tokens or private keys (HTTPS tokens, SSH keys, host key prompts, wrong account, missing scopes). Use for Authentication failed, HTTP 403, Permission denied (publickey), repeated credential prompts, or key permission warnings. Do NOT use for network outages, wrong remote names, or non-authentication rejections such as non-fast-forward.
-triggers: git push failed,permission denied publickey,authentication failed,ssh key,http 403,credential prompt,host key verification failed,cannot push commits,keeps asking for password,github rejects me
-risk: medium
+license: MIT
+compatibility: Termux on Android (Bionic libc, usually aarch64). Where a skill says so, also usable from a proot distro.
+metadata:
+  risk: "medium"
+  triggers: "git push failed,permission denied publickey,authentication failed,ssh key,http 403,credential prompt,host key verification failed,cannot push commits,keeps asking for password,github rejects me"
 ---
 # Git Credentials
 
@@ -28,6 +31,11 @@ Run `sh scripts/check-git-auth.sh`. It redacts credentials embedded in remote UR
 7. `Host key verification failed`: compare the fingerprint with the host's published one before accepting. Never set `StrictHostKeyChecking=no` as a fix.
 8. Works only sometimes: Termux does not start an `ssh-agent`. Name the key with `IdentityFile` in `~/.ssh/config`, or start an agent per session.
 9. Use one method per remote. Do not mix an embedded token and SSH on one repository.
+
+## Example
+- Situation: git push returns HTTP 403 although a token is configured.
+- Without the skill: Embeds the token in the remote URL and enables `credential.helper store`.
+- With the skill: Runs the redacting helper, checks token scope and SSO authorization, switches to `gh auth login` with `gh auth setup-git`, and reports any plaintext credential file as a finding.
 
 ## Safety
 Generating keys, editing `~/.ssh/config`, storing credentials, and changing remotes mutate state and need confirmation. Never paste tokens or private keys into chat, logs, commits, or URLs. Only a `.pub` file is safe to display.

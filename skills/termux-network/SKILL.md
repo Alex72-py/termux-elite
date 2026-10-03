@@ -1,8 +1,11 @@
 ---
 name: termux-network
 description: Diagnose network problems inside Termux (DNS, TLS certificate errors, clock skew, proxies, binding ports, reaching a Termux server from the phone or LAN) given Android's restrictions on interfaces and low ports. Use when curl, pip, git, or a local server cannot connect, when ifconfig or netstat show nothing, or when TLS reports a certificate not yet valid. Do NOT use for Wi-Fi or carrier faults outside the device, or for sshd specifics (see termux-sshd).
-triggers: termux no internet,dns failure,certificate verify failed,ifconfig empty,cannot bind port,curl failed termux,certificate not yet valid,no internet,dns lookup fails,certificate error,trust error
-risk: low
+license: MIT
+compatibility: Termux on Android (Bionic libc, usually aarch64). Where a skill says so, also usable from a proot distro.
+metadata:
+  risk: "low"
+  triggers: "termux no internet,dns failure,certificate verify failed,ifconfig empty,cannot bind port,curl failed termux,certificate not yet valid,no internet,dns lookup fails,certificate error,trust error"
 ---
 # Termux Network
 
@@ -32,6 +35,11 @@ Run `sh scripts/check-network.sh` (read-only). Pass a hostname as the single arg
 7. Binding a server: ports below 1024 cannot be bound without root; use 1024 or above. Bind `127.0.0.1` for local-only use, `0.0.0.0` to accept LAN clients.
 8. Reaching Termux from the phone's own browser works through `127.0.0.1:<port>`. From another device it needs the phone's LAN address, a `0.0.0.0` bind, and a network that does not isolate clients.
 9. A hotspot or guest Wi-Fi often blocks device-to-device traffic. Test on a normal LAN before debugging the server.
+
+## Example
+- Situation: pip fails with certificate is not yet valid.
+- Without the skill: Adds `--trusted-host` or disables verification.
+- With the skill: Checks the clock first, finds the date wrong, asks the user to enable automatic time in Android settings, and re-runs the unchanged command.
 
 ## Safety
 Read-only by default. Do not print proxy URLs, tokens, or full environment dumps. Never disable TLS verification (`-k`, `verify=False`, `StrictHostKeyChecking=no`) as a fix; at most use it for a single labeled diagnostic probe and say so.

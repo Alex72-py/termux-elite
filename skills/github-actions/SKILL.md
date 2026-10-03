@@ -1,8 +1,11 @@
 ---
 name: github-actions
 description: Investigate a failed GitHub Actions run from Termux without exposing credentials or guessing at the workflow. Use when a workflow, CI job, or check failed, when it passes locally but fails on the runner, or before editing a file under .github/workflows. Do NOT use for local-only test failures with no CI involved, and do not suggest Docker-based local runners such as act, since Termux cannot run Docker.
-triggers: github action failed,workflow failed,ci failed,passes locally fails on ci,gh run,check failed,works locally fails on ci,pipeline red,ci failing
-risk: low
+license: MIT
+compatibility: Termux on Android (Bionic libc, usually aarch64). Where a skill says so, also usable from a proot distro.
+metadata:
+  risk: "low"
+  triggers: "github action failed,workflow failed,ci failed,passes locally fails on ci,gh run,check failed,works locally fails on ci,pipeline red,ci failing"
 ---
 # GitHub Actions Investigation
 
@@ -34,6 +37,11 @@ Confirm the repository and commit with `git remote -v` (do not echo embedded tok
 3. Reproduce deterministically without Docker: same language version, same command from the workflow `run:` step, same environment variables (names only).
 4. Propose the smallest change and show the exact file and lines before editing.
 5. A rejected push that mentions the `workflow` scope means the token cannot update workflow files. Use a token with that scope or push through `gh auth` with it granted; never paste the token anywhere.
+
+## Example
+- Situation: CI fails pushing a tag with a permission error while the same steps pass locally.
+- Without the skill: Re-runs the job several times and edits application code.
+- With the skill: Reads `gh run view --log-failed`, finds the first failing step, classifies it as a read-only `GITHUB_TOKEN`, and shows the narrowest `permissions:` block before editing.
 
 ## Safety
 Never print `GITHUB_TOKEN`, cloud credentials, private keys, or full environment dumps. Re-running a job and pushing workflow edits change shared state; do them only on request.

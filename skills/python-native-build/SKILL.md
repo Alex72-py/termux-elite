@@ -1,8 +1,11 @@
 ---
 name: python-native-build
 description: Diagnose a failed Python install on Termux or Android (compiler or header errors, Rust or maturin builds, no wheel for this platform, glibc wheels that fail at import, externally-managed-environment) and pick the smallest fix, preferring Termux-packaged libraries over source builds. Use when pip or uv fails, when a build error mentions clang, cc, cargo, rustc or a missing .h file, or when an import fails right after a successful install. Do NOT use for slow downloads, pure-Python packages that install fine, or Node problems (see node-native-build).
-triggers: pip failed,python package install,wheel unavailable,build error,externally-managed-environment,failed building wheel,cargo failed,cannot locate symbol
-risk: medium
+license: MIT
+compatibility: Termux on Android (Bionic libc, usually aarch64). Where a skill says so, also usable from a proot distro.
+metadata:
+  risk: "medium"
+  triggers: "pip failed,python package install,wheel unavailable,build error,externally-managed-environment,failed building wheel,cargo failed,cannot locate symbol"
 ---
 # Python Native Build
 
@@ -43,6 +46,11 @@ Capture, read-only: `python -VV`, `python -m pip --version`, `uname -m`, the act
 | `can't find Rust compiler` or MSRV error | no or old Rust | install or upgrade `rust` |
 | `No matching distribution found` | no wheel for platform | step 3 or 4 |
 | `cannot locate symbol` at import | glibc wheel on Bionic | step 8 |
+
+## Example
+- Situation: pip install cryptography stops with can't find Rust compiler.
+- Without the skill: Adds `--break-system-packages`, then retries with `--no-build-isolation`, hiding the real dependency boundary.
+- With the skill: Checks for a Termux-packaged build first, uses a venv with `--system-site-packages` if one exists, otherwise installs `rust` and `binutils` after confirmation, and verifies with `import` and `pip check`.
 
 ## Safety
 Installing packages, creating venvs, and exporting build flags change the environment: state the exact change and confirm. Third-party package repositories (for example tur-repo) widen the trust boundary; ask before adding one.

@@ -1,8 +1,11 @@
 ---
 name: example-skill
 description: One or two sentences on the operational decision this skill makes and the symptoms it covers. Use when concrete symptoms, error strings, or phrases a user would say. Do NOT use for neighbouring cases (see other-skill) or for work that needs no skill.
-triggers: phrase one,phrase two,error string
-risk: low
+license: MIT
+compatibility: Termux on Android (Bionic libc, usually aarch64). Where a skill says so, also usable from a proot distro.
+metadata:
+  risk: "low"
+  triggers: "phrase one,phrase two,error string"
 ---
 # Example Skill
 
@@ -25,6 +28,11 @@ What to capture before acting. Read-only only. Name the helper script if there i
 
 ## Failure signatures
 Optional table: signature, layer, next step.
+
+## Example
+- Situation: one concrete symptom.
+- Without the skill: what an agent typically does wrong.
+- With the skill: the first check, the layer found, the confirmed change, and how it was verified.
 
 ## Safety
 Which steps mutate the environment and need confirmation. What must never be printed.

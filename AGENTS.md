@@ -20,6 +20,7 @@ Operational skills for agents working in Termux and Android. Load the single ski
 | `termux-sshd` | termux sshd, ssh into phone, port 8022, connection refused termux | medium |
 | `termux-backup` | backup termux, restore termux, migrate termux, snapshot termux | medium |
 | `termux-network` | termux no internet, dns failure, certificate verify failed, ifconfig empty | low |
+| `termux-adb` | adb pair, adb connect, wireless debugging, adb devices | medium |
 
 ## Rules
 

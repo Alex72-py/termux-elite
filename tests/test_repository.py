@@ -18,7 +18,7 @@ REQUIRED_KEYS = {
 }
 REQUIRED_SECTIONS = [
     "## Purpose", "## When to use", "## When NOT to use", "## Decision tree",
-    "## Safety", "## Verification", "## Handoffs", "## Report",
+    "## Example", "## Safety", "## Verification", "## Handoffs", "## Report",
 ]
 SCRIPTS = sorted((ROOT / "skills").glob("*/scripts/*.sh"))
 SECRET_PATTERNS = [
@@ -38,10 +38,16 @@ MAX_BODY_LINES = 150
 def parse_frontmatter(text):
     assert text.startswith("---\n"), "missing frontmatter"
     end = text.index("\n---\n", 4)
-    fields = {}
+    fields, meta, in_meta = {}, {}, False
     for line in text[4:end].splitlines():
+        if in_meta and line.startswith("  "):
+            key, _, value = line.strip().partition(":")
+            meta[key.strip()] = value.strip().strip('"')
+            continue
         key, _, value = line.partition(":")
-        fields[key.strip()] = value.strip()
+        key, value = key.strip(), value.strip()
+        in_meta = key == "metadata" and value == ""
+        fields[key] = meta if in_meta else value
     return fields, text[end + 5:]
 
 
@@ -80,8 +86,8 @@ def test_frontmatter_matches_manifest(item):
     fields, _ = read(item)
     assert fields["name"] == item["name"]
     assert fields["description"] == item["description"]
-    assert [t.strip() for t in fields["triggers"].split(",")] == item["triggers"]
-    assert fields["risk"] == item["risk_level"]
+    assert [x.strip() for x in fields["metadata"]["triggers"].split(",")] == item["triggers"]
+    assert fields["metadata"]["risk"] == item["risk_level"]
 
 
 @pytest.mark.parametrize("item", SKILLS, ids=IDS)
@@ -198,3 +204,35 @@ def test_no_obvious_secrets_committed():
             continue
         for pattern in SECRET_PATTERNS:
             assert not re.search(pattern, text), "%s matches %s" % (path.relative_to(ROOT), pattern)
+
+
+SPEC_KEYS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
+EXAMPLE_LABELS = ("- Situation:", "- Without the skill:", "- With the skill:")
+
+
+@pytest.mark.parametrize("item", SKILLS, ids=IDS)
+def test_frontmatter_follows_agent_skills_spec(item):
+    fields, _ = read(item)
+    assert set(fields) <= SPEC_KEYS, sorted(set(fields) - SPEC_KEYS)
+    assert fields["name"] == Path(item["path"]).parent.name
+    assert fields["license"]
+    assert 1 <= len(fields["compatibility"]) <= 500
+    assert set(fields["metadata"]) == {"risk", "triggers"}
+
+
+@pytest.mark.parametrize("item", SKILLS, ids=IDS)
+def test_frontmatter_parsers_agree(item):
+    yaml = pytest.importorskip("yaml")
+    text = (ROOT / item["path"]).read_text()
+    loaded = yaml.safe_load(text[4:text.index("\n---\n", 4)])
+    fields, _ = read(item)
+    assert loaded == fields
+
+
+@pytest.mark.parametrize("item", SKILLS, ids=IDS)
+def test_example_section_shape(item):
+    _, body = read(item)
+    lines = [l for l in section(body, "## Example").splitlines() if l.strip()]
+    assert len(lines) == 3, lines
+    for line, label in zip(lines, EXAMPLE_LABELS):
+        assert line.startswith(label), line

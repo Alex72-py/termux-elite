@@ -2,9 +2,9 @@
 
 [![ci](https://github.com/Alex72-py/termux-elite/actions/workflows/ci.yml/badge.svg)](https://github.com/Alex72-py/termux-elite/actions/workflows/ci.yml)
 [![license: MIT](https://img.shields.io/github/license/Alex72-py/termux-elite)](LICENSE)
-![skills: 14](https://img.shields.io/badge/skills-14-blue)
+![skills: 15](https://img.shields.io/badge/skills-15-blue)
 
-**Termux is not a normal Linux box, and your AI agent keeps forgetting that.** `termux-elite` gives coding agents 14 short, tested playbooks for the things that actually break on a phone: glibc wheels that will not import, `node-gyp` looking for an NDK, processes Android kills with signal 9, `/sdcard` permissions, proot versus native, and more.
+**Termux is not a normal Linux box, and your AI agent keeps forgetting that.** `termux-elite` gives coding agents 15 short, tested playbooks for the things that actually break on a phone: glibc wheels that will not import, `node-gyp` looking for an NDK, processes Android kills with signal 9, `/sdcard` permissions, proot versus native, and more.
 
 Each skill tells the agent what to inspect first, which layer is failing, what is safe to change, how to prove the fix worked, and when to hand off to a neighbouring skill.
 
@@ -43,6 +43,7 @@ The skill is a procedure, not a command to run blindly. See [examples/](examples
 | Passes locally, fails on GitHub Actions | [`github-actions`](skills/github-actions/SKILL.md) |
 | Unsure whether to use native Termux or proot, or a glibc binary will not run | [`proot-boundaries`](skills/proot-boundaries/SKILL.md) |
 | You want to SSH into the phone (port 8022) and get `connection refused` | [`termux-sshd`](skills/termux-sshd/SKILL.md) |
+| `adb pair` / `adb connect` from Termux, or `adb devices` says `unauthorized` | [`termux-adb`](skills/termux-adb/SKILL.md) |
 | You are about to upgrade or migrate and want a restore point | [`termux-backup`](skills/termux-backup/SKILL.md) |
 | What device, architecture, and toolchain is this, anyway? | [`termux-environment`](skills/termux-environment/SKILL.md) |
 
@@ -118,7 +119,7 @@ The most useful contribution is a real failure that no skill handled, or one whe
 ## Repository layout
 
 ```text
-skills/<name>/SKILL.md         the procedure (Agent Skills layout: name + description frontmatter)
+skills/<name>/SKILL.md         the procedure (Agent Skills frontmatter: name, description, license, compatibility, metadata)
 skills/<name>/scripts/         small read-only helpers that print key: value facts
 manifest.json                  discovery index (name, triggers, capabilities, risk, related, scripts)
 AGENTS.md                      generated routing index and rules, for hosts that load context files

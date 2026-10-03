@@ -1,8 +1,11 @@
 ---
 name: termux-environment
 description: Take a small read-only snapshot of a Termux or Android shell (native or proot, Android and Termux version, CPU architecture, installed toolchains, free storage and memory) before choosing a package manager, path, or fix. Use when a task depends on what the device is, when asked what is installed or which architecture applies, or at the start of any Termux debugging session. Do NOT use as a ritual before every command, for plain text questions, or to change anything.
-triggers: termux environment,android environment,what is installed,which architecture,am i in proot,termux version,android version
-risk: low
+license: MIT
+compatibility: Termux on Android (Bionic libc, usually aarch64). Where a skill says so, also usable from a proot distro.
+metadata:
+  risk: "low"
+  triggers: "termux environment,android environment,what is installed,which architecture,am i in proot,termux version,android version"
 ---
 # Termux Environment
 
@@ -29,6 +32,11 @@ Read-only shell only. No root, network, or Termux:API required.
 5. Hard-coded `/tmp`, `/bin/sh`, or `#!/usr/bin/env` fail on a bare Android layout. Termux uses `$TMPDIR` (`$PREFIX/tmp`) and `$PREFIX/bin/sh`, and `termux-exec` rewrites shebangs. Fix the path or variable, not the system.
 6. Under about 1 GiB free storage or available memory: warn before any compile, `pkg upgrade`, or large download.
 7. Termux and its plugin apps (Termux:API, Boot, Widget) must come from the same distribution source and signing key, or plugins fail to talk to Termux.
+
+## Example
+- Situation: A prebuilt binary will not run and the user says the phone is a recent flagship.
+- Without the skill: Guesses arm64 from the phone model and suggests an aarch64 download.
+- With the skill: Runs the helper, reads `architecture: armv8l` (a 32-bit userland), explains why aarch64 binaries cannot run, and reports the fact with the line that proves it.
 
 ## Safety
 Everything here is read-only. `termux-info` prints the device model and the full package list, so share only the lines the task needs. Never print `env` wholesale; it can contain tokens.
