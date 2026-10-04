@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased
+## 0.6.0 - 2026-10-04
+
+- Environment classification: `detect-environment.sh` now prints `environment_class` (`termux-native`, `proot`, `android-other`, `linux`, `wsl`, `container`, `macos`, `unknown`) with the evidence behind it, plus `libc`, `system_package_manager`, `python_externally_managed`, and which optional Termux repositories (`tur-repo`, `x11-repo`, `root-repo`) are enabled. Skills only apply Termux steps when the class is `termux-native`.
+- `python-native-build` now has an explicit install ladder for native Termux: Termux package, then `tur-repo` with consent, then a venv with `--system-site-packages`, then a third-party index with consent, and a source build last. cryptography and numpy are Termux main-repo packages; scipy and pandas have been distributed through `tur-repo`. `externally-managed-environment` and `failed building wheel` for packaged libraries are routed to that ladder, and `--break-system-packages` is a last resort. The helper also reports whether a venv can see system packages and which `python-*` packages are installed.
+- `package-troubleshooting` checks the optional repositories before declaring a package absent.
+- `AGENTS.md` rules now require reading `environment_class` first and state the Python ladder.
+- Tests simulate native Termux, proot, another Android shell, macOS, and plain Linux against the helper.
 
 - Frontmatter now follows the open Agent Skills format. `triggers` and `risk` moved under `metadata`, and every skill gains `license` and `compatibility`, so strict validators and every host that reads `SKILL.md` accept the files. `manifest.json` stays the routing source of truth and a test keeps the two in sync.
 - Every skill gains a three-line `## Example` (situation, without the skill, with the skill), checked by tests.
