@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "version": "0.5.0",
+  "version": "0.6.0",
   "name": "termux-elite",
   "description": "Portable operational skills for agents working inside Termux and Android environments.",
   "skills": [
     {
       "name": "termux-environment",
       "path": "skills/termux-environment/SKILL.md",
-      "description": "Take a small read-only snapshot of a Termux or Android shell (native or proot, Android and Termux version, CPU architecture, installed toolchains, free storage and memory) before choosing a package manager, path, or fix. Use when a task depends on what the device is, when asked what is installed or which architecture applies, or at the start of any Termux debugging session. Do NOT use as a ritual before every command, for plain text questions, or to change anything.",
+      "description": "Take a small read-only snapshot of a Termux or Android shell (native Termux, proot, another Android shell, or a non-Android system; Android and Termux version, CPU architecture, installed toolchains, free storage and memory) before choosing a package manager, path, or fix. Use when a task depends on what the device is, when asked what is installed or which architecture applies, or at the start of any Termux debugging session. Do NOT use as a ritual before every command, for plain text questions, or to change anything.",
       "triggers": [
         "termux environment",
         "android environment",
@@ -15,7 +15,8 @@
         "which architecture",
         "am i in proot",
         "termux version",
-        "android version"
+        "android version",
+        "is this termux"
       ],
       "required_capabilities": [
         "shell"
@@ -35,7 +36,7 @@
     {
       "name": "python-native-build",
       "path": "skills/python-native-build/SKILL.md",
-      "description": "Diagnose a failed Python install on Termux or Android (compiler or header errors, Rust or maturin builds, no wheel for this platform, glibc wheels that fail at import, externally-managed-environment) and pick the smallest fix, preferring Termux-packaged libraries over source builds. Use when pip or uv fails, when a build error mentions clang, cc, cargo, rustc or a missing .h file, or when an import fails right after a successful install. Do NOT use for slow downloads, pure-Python packages that install fine, or Node problems (see node-native-build).",
+      "description": "Diagnose a failed Python install on Termux or Android (compiler or header errors, Rust or maturin builds, no wheel for this platform, glibc wheels that fail at import, externally-managed-environment) and pick the smallest fix, preferring Termux-packaged libraries (the main repo, then tur-repo with consent) over source builds. Use when pip or uv fails, when a build error mentions clang, cc, cargo, rustc or a missing .h file, or when an import fails right after a successful install. Do NOT use for slow downloads, pure-Python packages that install fine, or Node problems (see node-native-build).",
       "triggers": [
         "pip failed",
         "python package install",
@@ -44,7 +45,12 @@
         "externally-managed-environment",
         "failed building wheel",
         "cargo failed",
-        "cannot locate symbol"
+        "cannot locate symbol",
+        "pip install cryptography",
+        "install numpy",
+        "install scipy",
+        "install pandas",
+        "no matching distribution"
       ],
       "required_capabilities": [
         "shell",

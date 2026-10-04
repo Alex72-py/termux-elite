@@ -62,6 +62,7 @@ It prints facts only and changes nothing. Paste the report to your agent, then f
 ## Safe by design
 
 - **Inspect before mutating.** The first step of every skill is a cheap read-only check, and each skill ships a small helper script that only prints `key: value` facts.
+- **Environment first.** The environment helper classifies the shell as native Termux, proot, another Android shell, or a non-Android system before any install, so an agent does not run Termux commands where they do not apply.
 - **Mutations are confirmed.** Package installs, permission changes, config edits, and service changes are named explicitly and need confirmation. Medium-risk skills include a rollback.
 - **No secrets.** Helpers redact credentials in URLs, never dump the environment, and the tests scan for committed tokens and keys.
 - **Verified.** CI runs the test suite on Python 3.9 and 3.12, runs shellcheck on every script, and fails when generated host files drift from `manifest.json`.

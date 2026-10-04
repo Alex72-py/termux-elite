@@ -9,6 +9,14 @@ sdk=unknown
 if have getprop; then sdk=$(getprop ro.build.version.sdk 2>/dev/null || printf unknown); fi
 printf '%s\n' "android_sdk: $sdk"
 printf '%s\n' "venv_active: ${VIRTUAL_ENV:-no}"
+if [ -n "${VIRTUAL_ENV:-}" ] && [ -f "$VIRTUAL_ENV/pyvenv.cfg" ]; then
+  printf '%s\n' "venv_system_site_packages: $(sed -n 's/^include-system-site-packages *= *//p' "$VIRTUAL_ENV/pyvenv.cfg")"
+fi
+printf '%s\n' "pip_break_system_packages_env: ${PIP_BREAK_SYSTEM_PACKAGES:-unset}"
+if have dpkg-query; then
+  libs=$(dpkg-query -W -f='${Package}\n' 'python-*' 2>/dev/null | head -n 30 | tr '\n' ' ' || true)
+  printf '%s\n' "packaged_python_libs: ${libs:-none}"
+fi
 printf '%s\n' "android_api_level_env: ${ANDROID_API_LEVEL:-unset}"
 for tool in cc clang make cmake pkg-config rustc cargo maturin; do
   if have "$tool"; then printf '%s: %s\n' "$tool" "$(command -v "$tool")"; else printf '%s: unavailable\n' "$tool"; fi

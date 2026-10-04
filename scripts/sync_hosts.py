@@ -34,10 +34,11 @@ Operational skills for agents working in Termux and Android. Load the single ski
 ## Rules
 
 1. Inspect before mutating. Each skill names a read-only helper in `scripts/`; run it first.
-2. Native Termux, proot, and Android are not interchangeable. Establish the side with `termux-environment` when unsure.
-3. Package installs, permission changes, config edits, and service changes mutate state: state the exact change and get confirmation.
-4. Never print tokens, private keys, or full environment dumps.
-5. After a change, re-run the original failing command. Report root cause, the change, the verification result, and any remaining limit.
+2. Native Termux, proot, other Android shells, and ordinary Linux or macOS are not interchangeable. Run the `termux-environment` helper and read `environment_class` before installing anything; unless it says `termux-native`, do not use Termux commands or package names.
+3. Python libraries on native Termux: the Termux package first (`pkg search python-<name>`), then `tur-repo` with consent, then a venv with `--system-site-packages`, and compile from source last. Never default to `--break-system-packages`.
+4. Package installs, permission changes, config edits, and service changes mutate state: state the exact change and get confirmation.
+5. Never print tokens, private keys, or full environment dumps.
+6. After a change, re-run the original failing command. Report root cause, the change, the verification result, and any remaining limit.
 
 ## Layout
 

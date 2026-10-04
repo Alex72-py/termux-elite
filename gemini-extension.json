@@ -1,6 +1,6 @@
 {
   "name": "termux-elite",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Portable operational skills for agents working inside Termux and Android environments.",
   "contextFileName": "AGENTS.md"
 }
