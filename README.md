@@ -2,6 +2,7 @@
 
 [![ci](https://github.com/Alex72-py/termux-elite/actions/workflows/ci.yml/badge.svg)](https://github.com/Alex72-py/termux-elite/actions/workflows/ci.yml)
 [![license: MIT](https://img.shields.io/github/license/Alex72-py/termux-elite)](LICENSE)
+[![release: v0.6.0](https://img.shields.io/github/v/release/Alex72-py/termux-elite)](https://github.com/Alex72-py/termux-elite/releases/latest)
 ![skills: 15](https://img.shields.io/badge/skills-15-blue)
 
 **Termux is not a normal Linux box, and your AI agent keeps forgetting that.** `termux-elite` gives coding agents 15 short, tested playbooks for the things that actually break on a phone: glibc wheels that will not import, `node-gyp` looking for an NDK, processes Android kills with signal 9, `/sdcard` permissions, proot versus native, and more.
